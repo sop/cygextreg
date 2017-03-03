@@ -1,0 +1,19 @@
+# Autotools
+Makefile
+Makefile.in
+.deps/
+.dirstamp
+/autom4te.cache/
+/aclocal.m4
+/autoscan-*.log
+/configure.scan
+/compile
+/config.*
+/configure
+/depcomp
+/install-sh
+/missing
+/stamp-h1
+
+*.o
+*.exe
