@@ -14,7 +14,7 @@ public:
 	~ElevatedProcess() {
 	}
 	bool isAdmin() const;
-	HINSTANCE startElevated(char* const argv[]);
+	HINSTANCE startElevated(int argc, char* const argv[]);
 private:
 	class ImpersonationToken;
 	class AdminSID;

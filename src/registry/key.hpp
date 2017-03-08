@@ -18,6 +18,8 @@ public:
 	virtual HKEY handle() const {
 		return _hKey;
 	}
+	bool hasSubKey(std::wstring subkey) const;
+	void deleteSubTree(std::wstring subkey) const;
 protected:
 	HKEY _hKey;
 };

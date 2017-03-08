@@ -6,17 +6,21 @@ namespace cygscript {
 
 class ExecCommand : public ICommand
 {
-	std::vector<std::string> _args;
+	std::vector<std::wstring> _args;
 public:
-	ExecCommand(std::vector<std::string> args) : _args(args) {
+	ExecCommand(std::vector<std::wstring> args) : _args(args) {
 	}
 	~ExecCommand() {
 	}
 	int run();
 private:
-	int _execute(std::vector<std::string> args);
-	bool _isWinPath(std::string path, bool must_exist);
-	bool _fileExists(std::string path);
+	std::vector<std::wstring> _getExecArgs();
+	int _execute(std::vector<std::wstring> args);
+	bool _isWinPath(std::wstring path, bool must_exist);
+	std::wstring _pathWinToPosix(std::wstring winpath);
+	std::wstring _escapeArg(std::wstring arg);
+	void _replaceAll(std::wstring& str, const std::wstring& from,
+	                 const std::wstring& to);
 };
 
 }

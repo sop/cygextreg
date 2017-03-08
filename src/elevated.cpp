@@ -13,12 +13,12 @@ bool ElevatedProcess::isAdmin() const {
 	return adminAcl.hasAccess(it);
 }
 
-HINSTANCE ElevatedProcess::startElevated(char* const argv[]) {
+HINSTANCE ElevatedProcess::startElevated(int argc, char* const argv[]) {
 	char winpath[MAX_PATH + 1];
 	char windir[MAX_PATH + 1];
 	int i;
 	std::stringstream ss;
-	for (i = 1; nullptr != argv[i]; ++i) {
+	for (i = 1; i < argc; ++i) {
 		ss << argv[i] << " ";
 	}
 	std::string args = ss.str();

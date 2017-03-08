@@ -1,13 +1,14 @@
 #include <vector>
 #include <string>
 
+
 namespace cygscript {
 
 class App
 {
+	int _argc;
 	char* const* _argv;
-	std::vector<std::string> _execArgs;
-	enum class Command { NONE, EXEC, REGISTER };
+	enum class Command { NONE, EXEC, REGISTER, UNREGISTER };
 	Command _cmd;
 	enum class RegisterType { USER, EVERYONE };
 	RegisterType _regType;
@@ -16,6 +17,7 @@ public:
 	int run();
 private:
 	void _printUsage(char* progname);
+	std::vector<std::wstring> _wideArgs();
 	void _checkElevated();
 };
 

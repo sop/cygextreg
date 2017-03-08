@@ -1,74 +1,108 @@
 #include "exec.hpp"
 #include <unistd.h>
 #include <iostream>
+#include <sstream>
+#include <algorithm>
 #include <sys/cygwin.h>
 #include <sys/stat.h>
 #include <windows.h>
 #include <shlwapi.h>
+#include "strconv.hpp"
+#include "winerror.hpp"
+#include "message.hpp"
 
 namespace cygscript {
 
 int ExecCommand::run() {
-	char pathbuf[MAX_PATH + 1];
-	std::vector<std::string> newargs;
+	wchar_t w_pathbuf[MAX_PATH + 1];
+	std::vector<std::wstring> newargs;
+	/* Windows path to mintty.exe */
 	if (0 != cygwin_conv_path(
-			CCP_POSIX_TO_WIN_A, "/bin/mintty.exe", pathbuf, sizeof(pathbuf))) {
+			CCP_POSIX_TO_WIN_W, "/bin/mintty.exe", w_pathbuf,
+			sizeof(w_pathbuf))) {
 		throw std::runtime_error(strerror(errno));
 	}
-	newargs.push_back(std::string(pathbuf));
-	newargs.push_back("--exec");
-	for (auto str : _args) {
-		if (_isWinPath(str, true)) {
-			if (0 != cygwin_conv_path(
-					CCP_WIN_A_TO_POSIX, str.c_str(), pathbuf,
-					sizeof(pathbuf))) {
-				throw std::runtime_error(strerror(errno));
-			}
-			newargs.push_back(std::string(pathbuf));
+	newargs.push_back(std::wstring(w_pathbuf));
+	/* force MinTTY's charset to UTF-8 */
+	newargs.push_back(L"-o");
+	newargs.push_back(L"Charset=UTF-8");
+	newargs.push_back(L"--exec");
+	for (auto arg : _getExecArgs()) {
+		/* convert Windows paths to cygwin form */
+		if (_isWinPath(arg, true)) {
+			newargs.push_back(_pathWinToPosix(arg));
 		} else {
-			newargs.push_back(str);
+			newargs.push_back(arg);
 		}
 	}
 	return _execute(newargs);
 }
 
-int ExecCommand::_execute(std::vector<std::string> args) {
-	char** argv;
-	argv = (char**)malloc((args.size() + 1) * sizeof(char*));
-	for (size_t i = 0; i < args.size(); ++i) {
-		argv[i] = (char*)args[i].c_str();
+std::vector<std::wstring> ExecCommand::_getExecArgs() {
+	std::vector<std::wstring> args;
+	size_t i;
+	for (i = 0; i < _args.size(); ++i) {
+		if (_args[i] == L"--") {
+			break;
+		}
 	}
-	argv[args.size()] = nullptr;
-	if (-1 == execv(argv[0], argv)) {
-		throw std::runtime_error(strerror(errno));
+	for (++i; i < _args.size(); ++i) {
+		args.push_back(_args[i]);
+	}
+	return args;
+}
+
+int ExecCommand::_execute(std::vector<std::wstring> args) {
+	STARTUPINFOA si = {};
+	PROCESS_INFORMATION pi = {};
+	std::wstringstream cmd_args;
+	for(auto arg : args) {
+		cmd_args << "\"" << _escapeArg(arg) << "\" ";
+	}
+	si.cb = sizeof(si);
+	std::string cmd_argsa = wide_to_mb(cmd_args.str(), CP_UTF8);
+	if (0 == CreateProcessA(
+			NULL, (LPSTR)cmd_argsa.c_str(), NULL, NULL, FALSE,
+			CREATE_NEW_PROCESS_GROUP, NULL, NULL, &si, &pi)) {
+		THROW_LAST_ERROR("Failed to start process");
 	}
 	return 0;
 }
 
-bool ExecCommand::_isWinPath(std::string path, bool must_exist)
-{
+bool ExecCommand::_isWinPath(std::wstring path, bool must_exist) {
 	/* if detected by Cygwin */
-	if (cygwin_posix_path_list_p(path.c_str())) {
+	if (cygwin_posix_path_list_p(wide_to_mb(path).c_str())) {
 		return false;
 	}
 	/* if path must exist */
-	if (must_exist && FALSE == PathFileExistsA(path.c_str())) {
+	if (must_exist && FALSE == PathFileExists(path.c_str())) {
 		return false;
 	}
 	return true;
 }
 
-bool ExecCommand::_fileExists(std::string path)
-{
-	struct stat s;
-	if (-1 == stat(path.c_str(), &s)) {
-		return false;
+std::wstring ExecCommand::_pathWinToPosix(std::wstring winpath) {
+	char buf[MAX_PATH + 1];
+	if (0 != cygwin_conv_path(
+			CCP_WIN_W_TO_POSIX, winpath.c_str(), buf, sizeof(buf))) {
+		throw std::runtime_error(strerror(errno));
 	}
-	if (!(S_ISREG(s.st_mode) || S_ISLNK(s.st_mode))) {
-		errno = ENOENT;
-		return false;
+	/* Cygwin represents paths in utf-8 */
+	return mb_to_wide(buf, CP_UTF8);
+}
+
+std::wstring ExecCommand::_escapeArg(std::wstring arg) {
+	_replaceAll(arg, L"\"", L"\\\"");
+	return arg;
+}
+
+void ExecCommand::_replaceAll(std::wstring& str, const std::wstring& from,
+                              const std::wstring& to) {
+	size_t start = 0;
+	while((start = str.find(from, start)) != std::wstring::npos) {
+		str.replace(start, from.length(), to);
+		start += to.length();
 	}
-	return true;
 }
 
 }

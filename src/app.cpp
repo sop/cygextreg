@@ -1,4 +1,5 @@
 #include "app.hpp"
+#include <windows.h>
 #include <iostream>
 #include <stdexcept>
 #include <memory>
@@ -6,18 +7,23 @@
 #include "register.hpp"
 #include "exec.hpp"
 #include "elevated.hpp"
+#include "strconv.hpp"
+#include "message.hpp"
 
 namespace cygscript {
 
 App::App(const int argc, char* const argv[]) :
+	_argc(argc),
 	_argv(argv),
 	_cmd(Command::NONE),
 	_regType(RegisterType::USER) {
-	static const char *opts = "re";
+	static const char *opts = "ruaeh";
 	static const struct option longopts[] = {
 		{ "register", no_argument, NULL, 'r' },
+		{ "unregister", no_argument, NULL, 'u' },
 		{ "all", no_argument, NULL, 'a' },
 		{ "exec", no_argument, NULL, 'e' },
+		{ "help", no_argument, NULL, 'h' },
 		{ 0, 0, 0, 0 }
 	};
 	while (1) {
@@ -31,6 +37,9 @@ App::App(const int argc, char* const argv[]) :
 		case 'r':
 			_cmd = Command::REGISTER;
 			break;
+		case 'u':
+			_cmd = Command::UNREGISTER;
+			break;
 		case 'a':
 			_regType = RegisterType::EVERYONE;
 			break;
@@ -38,6 +47,7 @@ App::App(const int argc, char* const argv[]) :
 			_cmd = Command::EXEC;
 			break;
 		case '?':
+		case 'h':
 		default:
 			_printUsage(argv[0]);
 			exit(EXIT_FAILURE);
@@ -47,23 +57,29 @@ App::App(const int argc, char* const argv[]) :
 		_printUsage(argv[0]);
 		exit(EXIT_FAILURE);
 	}
-	for (int i = optind; i < argc; ++i) {
-		_execArgs.push_back(std::string(argv[i]));
-	}
 }
 
 int App::run() {
 	std::unique_ptr<ICommand> cmd;
 	switch (_cmd) {
 	case Command::EXEC:
-		cmd = std::unique_ptr<ExecCommand>(new ExecCommand(_execArgs));
+		cmd = std::unique_ptr<ExecCommand>(new ExecCommand(_wideArgs()));
 		break;
 	case Command::REGISTER:
 		if (_regType == RegisterType::EVERYONE) {
 			_checkElevated();
 		}
 		cmd = std::unique_ptr<RegisterCommand>(
-			new RegisterCommand(_regType == RegisterType::EVERYONE));
+			new RegisterCommand(RegisterCommand::Command::REGISTER,
+			                    _regType == RegisterType::EVERYONE));
+		break;
+	case Command::UNREGISTER:
+		if (_regType == RegisterType::EVERYONE) {
+			_checkElevated();
+		}
+		cmd = std::unique_ptr<RegisterCommand>(
+			new RegisterCommand(RegisterCommand::Command::UNREGISTER,
+			                    _regType == RegisterType::EVERYONE));
 		break;
 	case Command::NONE:
 		return 1;
@@ -71,8 +87,40 @@ int App::run() {
 	return cmd->run();
 }
 
+static char help[] =
+	""
+	"Options:\n"
+	"  -r, --register     Add .sh filetype to Windows registry.\n"
+	"  -u, --unregister   Remove .sh filetype from Windows registry.\n"
+	"  -a, --all          Register or unregister filetype for all users, \n"
+	"                       default to current user.\n";
+
 void App::_printUsage(char *progname) {
-	std::cerr << "Usage: " << progname << std::endl;
+	std::stringstream ss;
+	ss << "Usage: " << progname << std::endl;
+	ss << help;
+	show_messagea(ss.str());
+}
+
+std::vector<std::wstring> App::_wideArgs() {
+	std::vector<std::wstring> args;
+	LPWSTR* argv;
+	int argc;
+	argv = CommandLineToArgvW(GetCommandLine(), &argc);
+	/* if Windows command line has less arguments than what was
+	   passed to the main(), then application was invoked from Cygwin shell. */
+	if (argc < _argc) {
+		for (int i = 0; i < _argc; ++i) {
+			/* assume utf-8 */
+			args.push_back(mb_to_wide(_argv[i], CP_UTF8));
+		}
+	} else {
+		for (int i = 0; i < argc; ++i) {
+			args.push_back(argv[i]);
+		}
+	}
+	LocalFree(argv);
+	return args;
 }
 
 void App::_checkElevated() {
@@ -80,7 +128,7 @@ void App::_checkElevated() {
 	if (proc.isAdmin()) {
 		return;
 	}
-	proc.startElevated(_argv);
+	proc.startElevated(_argc, _argv);
 	exit(EXIT_SUCCESS);
 }
 

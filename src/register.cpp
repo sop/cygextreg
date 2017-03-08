@@ -3,6 +3,8 @@
 #include <memory>
 #include <string.h>
 #include <sys/cygwin.h>
+#include "message.hpp"
+
 
 namespace cygscript {
 
@@ -16,8 +18,18 @@ int RegisterCommand::run() {
 			new PredefinedKey(HKEY_CURRENT_USER));
 	}
 	Key key(*root, L"Software\\Classes");
-	_registerAction(key);
-	_registerExtension(key, L".sh");
+	switch (_cmd) {
+	case Command::REGISTER:
+		_registerAction(key);
+		_registerExtension(key, L".sh");
+		show_messagew(L".sh extension registered.");
+		break;
+	case Command::UNREGISTER:
+		_unregisterExtension(key, L".sh");
+		_unregisterAction(key);
+		show_messagew(L".sh extension unregistered.");
+		break;
+	}
 	return 0;
 }
 
@@ -39,10 +51,29 @@ void RegisterCommand::_registerAction(const IKey& parent) {
 	    .setString(std::wstring(), L"{86C86720-42A0-1069-A2E8-08002B30309D}");
 }
 
+void RegisterCommand::_unregisterAction(const IKey& parent) {
+	if (!parent.hasSubKey(L"Cygwin.Script")) {
+		throw std::runtime_error("Not registered.");
+	}
+	parent.deleteSubTree(L"Cygwin.Script");
+}
+
 void RegisterCommand::_registerExtension(const IKey& parent,
                                          const std::wstring& ext) {
 	Key::create(parent, ext)
 	    .setString(std::wstring(), L"Cygwin.Script");
+}
+
+void RegisterCommand::_unregisterExtension(const IKey& parent,
+                                           const std::wstring& ext) {
+	if (!parent.hasSubKey(ext)) {
+		throw std::runtime_error("Not registered.");
+	}
+	Key key(parent, ext);
+	if (key.getString(L"") != L"Cygwin.Script") {
+		throw std::runtime_error("Not a Cygwin script extension.");
+	}
+	parent.deleteSubTree(ext);
 }
 
 std::wstring RegisterCommand::_getDefaultIcon() {

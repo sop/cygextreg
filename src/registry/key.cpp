@@ -4,6 +4,23 @@
 namespace registry
 {
 
+bool IKey::hasSubKey(std::wstring subkey) const {
+	HKEY hKey;
+	if(ERROR_SUCCESS != RegOpenKeyEx(
+		   _hKey, subkey.c_str(), 0, KEY_READ, &hKey)) {
+		return false;
+	}
+	RegCloseKey(hKey);
+	return true;
+}
+
+void IKey::deleteSubTree(std::wstring subkey) const {
+	LSTATUS status = RegDeleteTree(_hKey, subkey.c_str());
+	if (ERROR_SUCCESS != status) {
+		THROW_ERROR_CODE("Failed to delete registry tree", status);
+	}
+}
+
 Key::Key(const IKey& parent, std::wstring subkey, REGSAM access) {
 	HKEY hKey;
 	LSTATUS status = RegOpenKeyEx(
@@ -54,20 +71,21 @@ const Key& Key::setString(std::wstring name, std::wstring value) const {
 }
 
 std::wstring Key::getString(std::wstring name) const {
-	wchar_t buf[1];
+	wchar_t buf[16];
 	DWORD len = sizeof(buf);
 	LONG status = RegGetValue(
 		_hKey, NULL, name.c_str(), RRF_RT_REG_SZ,
 		NULL, buf, &len);
-	// if string fit to buffer
+	/* if string fits to buffer */
 	if (ERROR_SUCCESS == status) {
-		return std::wstring(buf, len >> 1);
+		/* convert returned value size to number of wchar_t's without null */
+		return std::wstring(buf, (len >> 1) - 1);
 	}
-	// no value
+	/* no value */
 	else if (ERROR_FILE_NOT_FOUND == status) {
 		return std::wstring();
 	}
-	// larger buffer required
+	/* larger buffer required */
 	std::wstring str;
 	if (ERROR_MORE_DATA == status) {
 		wchar_t *buf = (wchar_t *)HeapAlloc(GetProcessHeap(), 0, len);
@@ -75,11 +93,11 @@ std::wstring Key::getString(std::wstring name) const {
 			_hKey, NULL, name.c_str(), RRF_RT_REG_SZ,
 			NULL, buf, &len);
 		if (ERROR_SUCCESS == status) {
-			str = std::wstring(buf, len >> 1);
+			str = std::wstring(buf, (len >> 1) - 1);
 		}
 		HeapFree(GetProcessHeap(), 0, buf);
 	}
-	if (ERROR_SUCCESS == status) {
+	if (ERROR_SUCCESS != status) {
 		THROW_ERROR_CODE("Failed to fetch string registry value", status);
 	}
 	return str;
