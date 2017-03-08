@@ -4,7 +4,7 @@ namespace cygscript {
 
 std::string wide_to_mb(std::wstring str, UINT codepage) {
 	std::string out;
-	char buf[64];
+	char buf[MAX_PATH];
 	int ret;
 	/* try to fit string into stack buffer */
 	ret = WideCharToMultiByte(
@@ -19,22 +19,22 @@ std::string wide_to_mb(std::wstring str, UINT codepage) {
 		/* too small buffer, query required size and allocate from heap */
 		ret = WideCharToMultiByte(
 			codepage, 0, str.c_str(), -1, NULL, 0, NULL, NULL);
-		char* tmp = (char *)malloc(ret);
+		char* tmp = new char[ret];
 		ret = WideCharToMultiByte(
 			codepage, 0, str.c_str(), -1, tmp, ret, NULL, NULL);
 		out = std::string(tmp, ret - 1);
-		free(tmp);
+		delete[] tmp;
 	}
 	return out;
 }
 
 std::wstring mb_to_wide(std::string str, UINT codepage) {
 	std::wstring out;
-	wchar_t buf[64];
+	wchar_t buf[MAX_PATH];
 	int ret;
 	/* try to fit string into stack buffer */
 	ret = MultiByteToWideChar(
-		codepage, 0, str.c_str(), -1, buf, sizeof(buf));
+		codepage, 0, str.c_str(), -1, buf, sizeof(buf) / sizeof(buf[0]));
 	if (ret) {
 		out = std::wstring(buf, ret - 1);
 	} else {
@@ -45,11 +45,11 @@ std::wstring mb_to_wide(std::string str, UINT codepage) {
 		/* too small buffer, query required size and allocate from heap */
 		ret = MultiByteToWideChar(
 			codepage, 0, str.c_str(), -1, NULL, 0);
-		wchar_t* tmp = (wchar_t*)malloc(ret);
+		wchar_t* tmp = new wchar_t[ret];
 		ret = MultiByteToWideChar(
 			codepage, 0, str.c_str(), -1, tmp, ret);
 		out = std::wstring(tmp, ret - 1);
-		free(tmp);
+		delete[] tmp;
 	}
 	return out;
 }
