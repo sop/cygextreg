@@ -3,7 +3,7 @@
 
 namespace cygscript {
 
-void show_messagew(std::wstring msg, UINT type) {
+void show_message(std::wstring msg, UINT type) {
 	std::wostream* s;
 	s = type & MB_ICONERROR ? &std::wcerr : &std::wcout;
 	(*s) << msg.c_str() << std::endl;
@@ -13,7 +13,7 @@ void show_messagew(std::wstring msg, UINT type) {
 	}
 }
 
-void show_messagea(std::string msg, UINT type) {
+void show_message(std::string msg, UINT type) {
 	std::ostream* s;
 	s = type & MB_ICONERROR ? &std::cerr : &std::cout;
 	(*s) << msg.c_str() << std::endl;

@@ -22,12 +22,12 @@ int RegisterCommand::run() {
 	case Command::REGISTER:
 		_registerAction(key);
 		_registerExtension(key, L".sh");
-		show_messagew(L".sh extension registered.");
+		show_message(L".sh extension registered.");
 		break;
 	case Command::UNREGISTER:
 		_unregisterExtension(key, L".sh");
 		_unregisterAction(key);
-		show_messagew(L".sh extension unregistered.");
+		show_message(L".sh extension unregistered.");
 		break;
 	}
 	return 0;

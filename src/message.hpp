@@ -5,8 +5,8 @@
 
 namespace cygscript {
 
-void show_messagew(std::wstring msg, UINT type = MB_OK);
-void show_messagea(std::string msg, UINT type = MB_OK);
+void show_message(std::wstring msg, UINT type = MB_OK);
+void show_message(std::string msg, UINT type = MB_OK);
 
 }
 

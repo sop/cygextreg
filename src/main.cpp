@@ -13,7 +13,7 @@ int main(const int argc, char* const argv[]) {
 	} catch (const std::exception &e) {
 		std::stringstream ss;
 		ss << "ERROR: " << e.what() << std::endl;
-		cygscript::show_messagea(ss.str(), MB_OK | MB_ICONERROR);
+		cygscript::show_message(ss.str(), MB_OK | MB_ICONERROR);
 		return 1;
 	}
 	return 0;

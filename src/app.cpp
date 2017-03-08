@@ -99,7 +99,7 @@ void App::_printUsage(char *progname) {
 	std::stringstream ss;
 	ss << "Usage: " << progname << std::endl;
 	ss << help;
-	show_messagea(ss.str());
+	show_message(ss.str());
 }
 
 std::vector<std::wstring> App::_wideArgs() {
