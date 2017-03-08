@@ -97,7 +97,7 @@ std::wstring RegisterCommand::_getOpenCommand() {
 		throw std::runtime_error("Failed to get executable path");
 	}
 	std::wstringstream ss;
-	ss << L"\"" << std::wstring(buf, ret) << L"\"" << L" --exec \"%1\" %*";
+	ss << L"\"" << std::wstring(buf, ret) << L"\"" << L" --exec -- \"%1\" %*";
 	return ss.str();
 }
 
