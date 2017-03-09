@@ -6,4 +6,5 @@ AUTOMAKE_OPTIONS = subdir-objects
 
 bin_PROGRAMS = cygscript
 cygscript_SOURCES = main.cpp app.cpp register.cpp exec.cpp \
-    strconv.cpp message.cpp winerror.cpp elevated.cpp registry/key.cpp
+    strconv.cpp message.cpp winerror.cpp elevated.cpp \
+    registry/key.cpp env/envvar.cpp

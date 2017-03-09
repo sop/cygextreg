@@ -16,11 +16,14 @@ public:
 private:
 	std::vector<std::wstring> _getExecArgs();
 	int _execute(std::vector<std::wstring> args);
+	bool _fileExists(std::wstring path);
 	bool _isWinPath(std::wstring path, bool must_exist);
 	std::wstring _pathWinToPosix(std::wstring winpath);
 	std::wstring _escapeArg(std::wstring arg);
 	void _replaceAll(std::wstring& str, const std::wstring& from,
 	                 const std::wstring& to);
+	std::wstring _getEnvPath();
+	std::wstring _getScriptName(std::wstring path);
 };
 
 }
