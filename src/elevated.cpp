@@ -1,6 +1,7 @@
 #include "elevated.hpp"
 #include <sstream>
 #include <sys/cygwin.h>
+#include "message.hpp"
 #include "winerror.hpp"
 
 namespace cygscript {
@@ -16,15 +17,15 @@ bool ElevatedProcess::isAdmin() const {
 HINSTANCE ElevatedProcess::startElevated(int argc, char* const argv[]) {
 	char winpath[MAX_PATH + 1];
 	char windir[MAX_PATH + 1];
-	int i;
 	std::stringstream ss;
-	for (i = 1; i < argc; ++i) {
+	for (int i = 1; i < argc; ++i) {
 		ss << argv[i] << " ";
 	}
 	std::string args = ss.str();
 	args.pop_back();
 	if (0 != cygwin_conv_path(
-			CCP_POSIX_TO_WIN_A, argv[0], winpath, sizeof(winpath))) {
+			CCP_POSIX_TO_WIN_A | CCP_RELATIVE, argv[0], winpath,
+			sizeof(winpath))) {
 		throw std::runtime_error(strerror(errno));
 	}
 	if (0 != cygwin_conv_path(
