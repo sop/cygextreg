@@ -8,7 +8,7 @@ Windows explorer or dropping a file to `.sh` icon.
 ## Installation
 Prepare environment:
 
-    autoheader && autoconf && automake
+    aclocal && autoheader && automake --add-missing && autoconf
 
 Compile and install:
 
