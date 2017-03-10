@@ -14,7 +14,6 @@ AC_PROG_CC
 AC_PROG_CXX
 
 # Checks for libraries.
-AC_CHECK_LIB([Shlwapi], [PathFileExistsA])
 
 # Checks for header files.
 
