@@ -1,7 +1,8 @@
-#ifndef __MESSAGE_HPP__
-#define __MESSAGE_HPP__
+#ifndef __UTIL__MESSAGE_HPP__
+#define __UTIL__MESSAGE_HPP__
 
 #include <windows.h>
+#include <iostream>
 
 namespace cygscript {
 

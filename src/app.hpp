@@ -1,7 +1,6 @@
 #include <vector>
 #include <string>
 
-
 namespace cygscript {
 
 class App

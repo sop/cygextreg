@@ -5,7 +5,6 @@
 #include "app.hpp"
 #include "util/message.hpp"
 
-
 int main(const int argc, char* const argv[]) {
 	try {
 		cygscript::App app(argc, argv);

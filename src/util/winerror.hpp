@@ -1,5 +1,5 @@
-#ifndef __WINERROR_HPP__
-#define __WINERROR_HPP__
+#ifndef __UTIL__WINERROR_HPP__
+#define __UTIL__WINERROR_HPP__
 
 #include <windows.h>
 #include <sstream>
@@ -37,7 +37,7 @@ private:
 	std::wstring _translateMessage() const;
 };
 
-// std::string + WinError operator
+/* std::string + WinError operator */
 std::string operator+(const std::string &str, const WinError &err);
 
 }

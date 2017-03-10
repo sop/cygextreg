@@ -1,3 +1,6 @@
+#ifndef __UTIL__ELEVATED_HPP__
+#define __UTIL__ELEVATED_HPP__
+
 #include <windows.h>
 
 namespace cygscript {
@@ -61,3 +64,5 @@ public:
 };
 
 }
+
+#endif

@@ -19,14 +19,14 @@ std::wstring EnvVar::get() const {
 	std::wstring ret;
 	DWORD len = GetEnvironmentVariable(
 		_name.c_str(), buf, sizeof(buf) / sizeof(buf[0]));
-	// not found or error
+	/* not found or error */
 	if (0 == len) {
 		if (ERROR_ENVVAR_NOT_FOUND != GetLastError()) {
 			THROW_LAST_ERROR("GetEnvironmentVariable");
 		}
-		// return empty string for non-existing value
+		/* return empty string for non-existing value */
 	}
-	// buffer too small
+	/* buffer too small */
 	else if (len > sizeof(buf) / sizeof(buf[0])) {
 		wchar_t* tmp = new wchar_t[len];
 		len = GetEnvironmentVariable(_name.c_str(), tmp, len);

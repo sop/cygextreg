@@ -5,7 +5,6 @@
 #include <sys/cygwin.h>
 #include "util/message.hpp"
 
-
 namespace cygscript {
 
 int RegisterCommand::run() {
