@@ -1,5 +1,4 @@
 #include "key.hpp"
-#include "winerror.hpp"
 
 namespace registry
 {

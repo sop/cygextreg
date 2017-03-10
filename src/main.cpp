@@ -3,7 +3,7 @@
 #include <stdexcept>
 #include <windows.h>
 #include "app.hpp"
-#include "message.hpp"
+#include "util/message.hpp"
 
 
 int main(const int argc, char* const argv[]) {

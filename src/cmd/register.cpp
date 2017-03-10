@@ -3,7 +3,7 @@
 #include <memory>
 #include <string.h>
 #include <sys/cygwin.h>
-#include "message.hpp"
+#include "util/message.hpp"
 
 
 namespace cygscript {

@@ -7,9 +7,9 @@
 #include "cmd/register.hpp"
 #include "cmd/exec.hpp"
 #include "cmd/list.hpp"
-#include "elevated.hpp"
-#include "strconv.hpp"
-#include "message.hpp"
+#include "util/elevated.hpp"
+#include "util/strconv.hpp"
+#include "util/message.hpp"
 
 namespace cygscript {
 

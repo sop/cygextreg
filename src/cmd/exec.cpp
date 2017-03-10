@@ -7,9 +7,9 @@
 #include <sys/stat.h>
 #include <windows.h>
 #include <shlwapi.h>
-#include "strconv.hpp"
-#include "winerror.hpp"
-#include "message.hpp"
+#include "util/strconv.hpp"
+#include "util/winerror.hpp"
+#include "util/message.hpp"
 #include "env/envvar.hpp"
 
 namespace cygscript {

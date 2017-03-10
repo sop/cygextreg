@@ -1,7 +1,7 @@
 #include "list.hpp"
 #include <memory>
-#include "strconv.hpp"
-#include "message.hpp"
+#include "util/strconv.hpp"
+#include "util/message.hpp"
 
 namespace cygscript {
 
