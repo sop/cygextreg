@@ -1,5 +1,5 @@
-#ifndef __ENVVAR_HPP__
-#define __ENVVAR_HPP__
+#ifndef __ENV__ENVVAR_HPP__
+#define __ENV__ENVVAR_HPP__
 
 #include <windows.h>
 #include <string>

@@ -1,3 +1,6 @@
+#ifndef __REGISTRY__KEY_HPP__
+#define __REGISTRY__KEY_HPP__
+
 #include <string>
 #include <iostream>
 #include <windows.h>
@@ -61,3 +64,5 @@ public:
 };
 
 }
+
+#endif
