@@ -4,9 +4,9 @@
 #include <stdexcept>
 #include <memory>
 #include <getopt.h>
-#include "register.hpp"
-#include "exec.hpp"
-#include "list.hpp"
+#include "cmd/register.hpp"
+#include "cmd/exec.hpp"
+#include "cmd/list.hpp"
 #include "elevated.hpp"
 #include "strconv.hpp"
 #include "message.hpp"
