@@ -8,7 +8,7 @@ class App
 {
 	int _argc;
 	char* const* _argv;
-	enum class Command { NONE, EXEC, REGISTER, UNREGISTER };
+	enum class Command { NONE, EXEC, REGISTER, UNREGISTER, LIST };
 	Command _cmd;
 	enum class RegisterType { USER, EVERYONE };
 	RegisterType _regType;

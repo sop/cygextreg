@@ -6,6 +6,7 @@
 #include <getopt.h>
 #include "register.hpp"
 #include "exec.hpp"
+#include "list.hpp"
 #include "elevated.hpp"
 #include "strconv.hpp"
 #include "message.hpp"
@@ -17,11 +18,12 @@ App::App(const int argc, char* const argv[]) :
 	_argv(argv),
 	_cmd(Command::NONE),
 	_regType(RegisterType::USER) {
-	static const char *opts = "ruaeh";
+	static const char *opts = "rualeh";
 	static const struct option longopts[] = {
 		{ "register", no_argument, NULL, 'r' },
 		{ "unregister", no_argument, NULL, 'u' },
 		{ "all", no_argument, NULL, 'a' },
+		{ "list", no_argument, NULL, 'l' },
 		{ "exec", no_argument, NULL, 'e' },
 		{ "help", no_argument, NULL, 'h' },
 		{ 0, 0, 0, 0 }
@@ -42,6 +44,9 @@ App::App(const int argc, char* const argv[]) :
 			break;
 		case 'a':
 			_regType = RegisterType::EVERYONE;
+			break;
+		case 'l':
+			_cmd = Command::LIST;
 			break;
 		case 'e':
 			_cmd = Command::EXEC;
@@ -81,6 +86,9 @@ int App::run() {
 			new RegisterCommand(RegisterCommand::Command::UNREGISTER,
 			                    _regType == RegisterType::EVERYONE));
 		break;
+	case Command::LIST:
+		cmd = std::unique_ptr<ListCommand>(new ListCommand());
+		break;
 	case Command::NONE:
 		return 1;
 	}
@@ -93,11 +101,15 @@ static char help[] =
 	"  -r, --register     Add .sh filetype to Windows registry.\n"
 	"  -u, --unregister   Remove .sh filetype from Windows registry.\n"
 	"  -a, --all          Register or unregister filetype for all users, \n"
-	"                       default to current user.\n";
+	"                       default to current user.\n"
+	"  -l, --list         List registry status.\n"
+	"  -h, --help         This help.\n";
 
 void App::_printUsage(char *progname) {
 	std::stringstream ss;
-	ss << "Usage: " << progname << std::endl;
+	ss << "Usage: " << progname << " [OPTION]..." << std::endl;
+	ss << "Register .sh filetype to Windows explorer." << std::endl;
+	ss << std::endl;
 	ss << help;
 	show_message(ss.str());
 }
