@@ -1,4 +1,5 @@
 #include "app.hpp"
+#include "config.h"
 #include <windows.h>
 #include <iostream>
 #include <stdexcept>
@@ -18,13 +19,14 @@ App::App(const int argc, char* const argv[]) :
 	_argv(argv),
 	_cmd(Command::NONE),
 	_regType(RegisterType::USER) {
-	static const char *opts = "rualeh";
+	static const char *opts = "rualehV";
 	static const struct option longopts[] = {
 		{ "register", no_argument, NULL, 'r' },
 		{ "unregister", no_argument, NULL, 'u' },
 		{ "all", no_argument, NULL, 'a' },
 		{ "list", no_argument, NULL, 'l' },
 		{ "exec", no_argument, NULL, 'e' },
+		{ "version", no_argument, NULL, 'V' },
 		{ "help", no_argument, NULL, 'h' },
 		{ 0, 0, 0, 0 }
 	};
@@ -51,6 +53,9 @@ App::App(const int argc, char* const argv[]) :
 		case 'e':
 			_cmd = Command::EXEC;
 			break;
+		case 'V':
+			_printVersion();
+			exit(EXIT_SUCCESS);
 		case '?':
 		case 'h':
 		default:
@@ -103,7 +108,8 @@ static char help[] =
 	"  -a, --all          Register or unregister filetype for all users, \n"
 	"                       default to current user.\n"
 	"  -l, --list         List registry status.\n"
-	"  -h, --help         This help.\n";
+	"  -h, --help         Display this help and exit.\n"
+	"  -V, --version      Print version and exit.\n";
 
 void App::_printUsage(char *progname) {
 	std::stringstream ss;
@@ -112,6 +118,12 @@ void App::_printUsage(char *progname) {
 	ss << std::endl;
 	ss << help;
 	show_message(ss.str());
+}
+
+void App::_printVersion() {
+	std::cout << "cygscript " << VERSION << std::endl;
+	std::cout << "Copyright (C) 2017 Joni Eskelinen" << std::endl;
+	std::cout << "License MIT: The MIT License" << std::endl;
 }
 
 std::vector<std::wstring> App::_wideArgs() {

@@ -16,6 +16,7 @@ public:
 	int run();
 private:
 	void _printUsage(char* progname);
+	void _printVersion();
 	std::vector<std::wstring> _wideArgs();
 	void _checkElevated();
 };
