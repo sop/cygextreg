@@ -3,7 +3,7 @@
 namespace registry
 {
 
-bool IKey::hasSubKey(std::wstring subkey) const {
+bool IKey::hasSubKey(const std::wstring& subkey) const {
 	HKEY hKey;
 	if(ERROR_SUCCESS != RegOpenKeyEx(
 		   _hKey, subkey.c_str(), 0, KEY_READ, &hKey)) {
@@ -13,17 +13,17 @@ bool IKey::hasSubKey(std::wstring subkey) const {
 	return true;
 }
 
-void IKey::deleteSubTree(std::wstring subkey) const {
+void IKey::deleteSubTree(const std::wstring& subkey) const {
 	LSTATUS status = RegDeleteTree(_hKey, subkey.c_str());
 	if (ERROR_SUCCESS != status) {
 		THROW_ERROR_CODE("Failed to delete registry tree", status);
 	}
 }
 
-Key::Key(const IKey& parent, std::wstring subkey, REGSAM access) {
+Key::Key(const IKey& parent, const std::wstring& subkey, REGSAM access) {
 	HKEY hKey;
 	LSTATUS status = RegOpenKeyEx(
-		parent.handle(), subkey.c_str(), 0, access, &hKey);
+		parent, subkey.c_str(), 0, access, &hKey);
 	if (ERROR_SUCCESS != status) {
 		THROW_ERROR_CODE("Failed to open registry key", status);
 	}
@@ -37,10 +37,10 @@ Key::~Key() {
 	}
 }
 
-Key Key::create(const IKey& parent, std::wstring subkey, REGSAM access) {
+Key Key::create(const IKey& parent, const std::wstring& subkey, REGSAM access) {
 	HKEY hKey;
 	LONG result = RegCreateKeyEx(
-		parent.handle(), subkey.c_str(), 0, NULL, 0,
+		parent, subkey.c_str(), 0, NULL, 0,
 		access, NULL, &hKey, NULL);
 	if (ERROR_SUCCESS != result) {
 		THROW_ERROR_CODE("Failed to create registry key", result);
@@ -48,7 +48,7 @@ Key Key::create(const IKey& parent, std::wstring subkey, REGSAM access) {
 	return Key(hKey);
 }
 
-bool Key::valueExists(std::wstring name, DWORD type) const {
+bool Key::valueExists(const std::wstring& name, DWORD type) const {
 	LONG status = RegGetValue(
 		_hKey, NULL, name.c_str(), type & 0xffff,
 		NULL, NULL, NULL);
@@ -58,7 +58,7 @@ bool Key::valueExists(std::wstring name, DWORD type) const {
 	return false;
 }
 
-const Key& Key::setString(std::wstring name, std::wstring value) const {
+const Key& Key::setString(const std::wstring& name, std::wstring value) const {
 	LONG status = RegSetValueEx(
 		_hKey, name.c_str(), 0, REG_SZ,
 		(LPBYTE)value.c_str(),
@@ -69,7 +69,7 @@ const Key& Key::setString(std::wstring name, std::wstring value) const {
 	return *this;
 }
 
-std::wstring Key::getString(std::wstring name) const {
+std::wstring Key::getString(const std::wstring& name) const {
 	wchar_t buf[16];
 	DWORD len = sizeof(buf);
 	LONG status = RegGetValue(
@@ -102,7 +102,7 @@ std::wstring Key::getString(std::wstring name) const {
 	return str;
 }
 
-const Key& Key::setDword(std::wstring name, DWORD value) const {
+const Key& Key::setDword(const std::wstring& name, DWORD value) const {
 	LONG status = RegSetValueEx(
 		_hKey, name.c_str(), 0, REG_DWORD,
 		(BYTE *)&value,

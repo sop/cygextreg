@@ -11,6 +11,7 @@ class App
 	Command _cmd;
 	enum class RegisterType { USER, EVERYONE };
 	RegisterType _regType;
+	std::string _extension;
 public:
 	App(const int argc, char* const argv[]);
 	int run();

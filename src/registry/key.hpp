@@ -21,8 +21,11 @@ public:
 	virtual HKEY handle() const {
 		return _hKey;
 	}
-	bool hasSubKey(std::wstring subkey) const;
-	void deleteSubTree(std::wstring subkey) const;
+	operator HKEY() const {
+		return _hKey;
+	}
+	bool hasSubKey(const std::wstring& subkey) const;
+	void deleteSubTree(const std::wstring& subkey) const;
 protected:
 	HKEY _hKey;
 };
@@ -32,7 +35,7 @@ class Key : public IKey
 public:
 	Key(HKEY hKey) : IKey(hKey) {
 	}
-	Key(const IKey& parent, std::wstring subkey,
+	Key(const IKey& parent, const std::wstring& subkey,
 	    REGSAM access = KEY_ALL_ACCESS);
 	Key(const Key& rhs) : IKey() {
 		if (!DuplicateHandle(
@@ -46,12 +49,12 @@ public:
 		rhs._hKey = NULL;
 	}
 	~Key();
-	static Key create(const IKey& parent, std::wstring subkey,
+	static Key create(const IKey& parent, const std::wstring& subkey,
 	                  REGSAM access = KEY_ALL_ACCESS);
-	bool valueExists(std::wstring name, DWORD type = RRF_RT_ANY) const;
-	const Key& setString(std::wstring name, std::wstring value) const;
-	std::wstring getString(std::wstring name) const;
-	const Key& setDword(std::wstring name, DWORD value) const;
+	bool valueExists(const std::wstring& name, DWORD type = RRF_RT_ANY) const;
+	const Key& setString(const std::wstring& name, std::wstring value) const;
+	std::wstring getString(const std::wstring& name) const;
+	const Key& setDword(const std::wstring& name, DWORD value) const;
 };
 
 class PredefinedKey : public IKey

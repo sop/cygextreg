@@ -18,11 +18,12 @@ App::App(const int argc, char* const argv[]) :
 	_argc(argc),
 	_argv(argv),
 	_cmd(Command::NONE),
-	_regType(RegisterType::USER) {
-	static const char *opts = "rualehV";
+	_regType(RegisterType::USER),
+	_extension(".sh") {
+	static const char *opts = "r::u::alehV";
 	static const struct option longopts[] = {
-		{ "register", no_argument, NULL, 'r' },
-		{ "unregister", no_argument, NULL, 'u' },
+		{ "register", optional_argument, NULL, 'r' },
+		{ "unregister", optional_argument, NULL, 'u' },
 		{ "all", no_argument, NULL, 'a' },
 		{ "list", no_argument, NULL, 'l' },
 		{ "exec", no_argument, NULL, 'e' },
@@ -40,9 +41,15 @@ App::App(const int argc, char* const argv[]) :
 		switch (c) {
 		case 'r':
 			_cmd = Command::REGISTER;
+			if (optarg) {
+				_extension = optarg;
+			}
 			break;
 		case 'u':
 			_cmd = Command::UNREGISTER;
+			if (optarg) {
+				_extension = optarg;
+			}
 			break;
 		case 'a':
 			_regType = RegisterType::EVERYONE;
@@ -67,30 +74,39 @@ App::App(const int argc, char* const argv[]) :
 		_printUsage(argv[0]);
 		exit(EXIT_FAILURE);
 	}
+	if ('.' != _extension[0]) {
+		_extension.insert(0, ".");
+	}
 }
 
 int App::run() {
 	std::unique_ptr<ICommand> cmd;
 	switch (_cmd) {
+	/* execute command */
 	case Command::EXEC:
 		cmd = std::unique_ptr<ExecCommand>(new ExecCommand(_wideArgs()));
 		break;
+	/* register extension */
 	case Command::REGISTER:
 		if (_regType == RegisterType::EVERYONE) {
 			_checkElevated();
 		}
 		cmd = std::unique_ptr<RegisterCommand>(
 			new RegisterCommand(RegisterCommand::Command::REGISTER,
+			                    _extension,
 			                    _regType == RegisterType::EVERYONE));
 		break;
+	/* unregister extension */
 	case Command::UNREGISTER:
 		if (_regType == RegisterType::EVERYONE) {
 			_checkElevated();
 		}
 		cmd = std::unique_ptr<RegisterCommand>(
 			new RegisterCommand(RegisterCommand::Command::UNREGISTER,
+			                    _extension,
 			                    _regType == RegisterType::EVERYONE));
 		break;
+	/* list registered extensions */
 	case Command::LIST:
 		cmd = std::unique_ptr<ListCommand>(new ListCommand());
 		break;
@@ -103,13 +119,15 @@ int App::run() {
 static char help[] =
 	""
 	"Options:\n"
-	"  -r, --register     Add .sh filetype to Windows registry.\n"
-	"  -u, --unregister   Remove .sh filetype from Windows registry.\n"
-	"  -a, --all          Register or unregister filetype for all users, \n"
-	"                       default to current user.\n"
-	"  -l, --list         List registry status.\n"
-	"  -h, --help         Display this help and exit.\n"
-	"  -V, --version      Print version and exit.\n";
+	"  -r, --register=EXT    Add filetype to Windows registry.\n"
+	"                          Default to .sh extension.\n"
+	"  -u, --unregister=EXT  Remove filetype from Windows registry.\n"
+	"                          Default to .sh extension.\n"
+	"  -a, --all             Register or unregister filetype for all users, \n"
+	"                          default to current user.\n"
+	"  -l, --list            List registry status.\n"
+	"  -h, --help            Display this help and exit.\n"
+	"  -V, --version         Print version and exit.\n";
 
 void App::_printUsage(char *progname) {
 	std::stringstream ss;

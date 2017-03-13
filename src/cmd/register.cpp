@@ -3,12 +3,14 @@
 #include <memory>
 #include <string.h>
 #include <sys/cygwin.h>
+#include "util/strconv.hpp"
 #include "util/message.hpp"
 
 namespace cygscript {
 
 int RegisterCommand::run() {
 	std::unique_ptr<IKey> root;
+	std::wstring ext = mb_to_wide(_extension);
 	if (_forAllUsers) {
 		root = std::unique_ptr<PredefinedKey>(
 			new PredefinedKey(HKEY_LOCAL_MACHINE));
@@ -19,23 +21,26 @@ int RegisterCommand::run() {
 	Key key(*root, L"Software\\Classes");
 	switch (_cmd) {
 	case Command::REGISTER:
-		_registerAction(key);
-		_registerExtension(key, L".sh");
-		show_message(L".sh extension registered.");
+		_registerAction(key, ext);
+		_registerExtension(key, ext);
+		show_message(ext + L" extension registered.");
 		break;
 	case Command::UNREGISTER:
-		_unregisterExtension(key, L".sh");
-		_unregisterAction(key);
-		show_message(L".sh extension unregistered.");
+		_unregisterExtension(key, ext);
+		_unregisterAction(key, ext);
+		show_message(ext + L" extension unregistered.");
 		break;
 	}
 	return 0;
 }
 
-void RegisterCommand::_registerAction(const IKey& parent) {
+void RegisterCommand::_registerAction(const IKey& parent,
+                                      const std::wstring& ext) {
+	std::wstring kname = std::wstring(L"cygscript") + ext;
+	std::wstring desc = std::wstring(L"Cygwin Shell Script (" + ext + L")");
 	/* base key */
-	Key base = Key::create(parent, L"Cygwin.Script")
-	               .setString(std::wstring(), L"Cygwin Shell Script")
+	Key base = Key::create(parent, kname)
+	               .setString(std::wstring(), desc)
 	               .setDword(L"EditFlags", 0x30);
 	/* default icon*/
 	Key::create(base, L"DefaultIcon")
@@ -50,26 +55,32 @@ void RegisterCommand::_registerAction(const IKey& parent) {
 	    .setString(std::wstring(), L"{86C86720-42A0-1069-A2E8-08002B30309D}");
 }
 
-void RegisterCommand::_unregisterAction(const IKey& parent) {
-	if (!parent.hasSubKey(L"Cygwin.Script")) {
-		throw std::runtime_error("Not registered.");
+void RegisterCommand::_unregisterAction(const IKey& parent,
+                                        const std::wstring& ext) {
+	std::wstring kname = std::wstring(L"cygscript") + ext;
+	if (!parent.hasSubKey(kname)) {
+		throw std::runtime_error(std::string("Extension ") +
+		                         wide_to_mb(ext) + " not registered.");
 	}
-	parent.deleteSubTree(L"Cygwin.Script");
+	parent.deleteSubTree(kname);
 }
 
 void RegisterCommand::_registerExtension(const IKey& parent,
                                          const std::wstring& ext) {
+	std::wstring handler = std::wstring(L"cygscript") + ext;
 	Key::create(parent, ext)
-	    .setString(std::wstring(), L"Cygwin.Script");
+	    .setString(std::wstring(), handler);
 }
 
 void RegisterCommand::_unregisterExtension(const IKey& parent,
                                            const std::wstring& ext) {
+	std::wstring handler = std::wstring(L"cygscript") + ext;
 	if (!parent.hasSubKey(ext)) {
-		throw std::runtime_error("Not registered.");
+		throw std::runtime_error(std::string("Extension ") +
+		                         wide_to_mb(ext) + " not registered.");
 	}
 	Key key(parent, ext);
-	if (key.getString(L"") != L"Cygwin.Script") {
+	if (key.getString(L"") != handler) {
 		throw std::runtime_error("Not a Cygwin script extension.");
 	}
 	parent.deleteSubTree(ext);
