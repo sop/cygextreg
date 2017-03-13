@@ -33,15 +33,9 @@ int ExecCommand::run() {
 		throw std::runtime_error(strerror(errno));
 	}
 	cmd_line << w_pathbuf << L" -o Charset=UTF-8"
-	         << L" -t " << _escapeArg(script_name)
-	         << L" --exec /bin/sh -il --";
-	for (auto arg : _getExecArgs()) {
-		/* convert Windows paths to Cygwin form */
-		if (_isWinPath(arg, true)) {
-			arg = mb_to_wide(_pathWinToPosix(arg));
-		}
-		cmd_line << L" " << _escapeArg(arg);
-	}
+	         << L" -t " << _escapeWinArg(script_name)
+	         << L" --exec /bin/sh -il -c ";
+	cmd_line << _escapeWinArg(_getExecCmd());
 	_execute(cmd_line.str());
 	return 0;
 }
@@ -61,7 +55,24 @@ std::vector<std::wstring> ExecCommand::_getExecArgs() {
 	return args;
 }
 
-void ExecCommand::_execute(std::wstring cmd_line) {
+std::wstring ExecCommand::_getExecCmd() {
+	std::wstringstream ss;
+	for (auto arg : _getExecArgs()) {
+		/* convert Windows paths to Cygwin form */
+		if (_isWinPath(arg, true)) {
+			arg = mb_to_wide(_pathWinToPosix(_toLongPath(arg)));
+		}
+		ss << _escapePosixArg(arg) << L" ";
+	}
+	std::wstring cmd = ss.str();
+	/* remove leading space */
+	if (cmd.size()) {
+		cmd.pop_back();
+	}
+	return cmd;
+}
+
+void ExecCommand::_execute(const std::wstring& cmd_line) {
 	STARTUPINFO si = {};
 	si.cb = sizeof(si);
 	PROCESS_INFORMATION pi = {};
@@ -74,7 +85,7 @@ void ExecCommand::_execute(std::wstring cmd_line) {
 	}
 }
 
-bool ExecCommand::_isWinPath(std::wstring path, bool must_exist) {
+bool ExecCommand::_isWinPath(const std::wstring& path, bool must_exist) {
 	/* if detected by Cygwin */
 	if (cygwin_posix_path_list_p(wide_to_mb(path).c_str())) {
 		return false;
@@ -86,7 +97,7 @@ bool ExecCommand::_isWinPath(std::wstring path, bool must_exist) {
 	return true;
 }
 
-bool ExecCommand::_fileExists(std::wstring path) {
+bool ExecCommand::_fileExists(const std::wstring& path) {
 	std::string posix_path = _pathWinToPosix(path);
 	struct stat s;
 	if (-1 == stat(posix_path.c_str(), &s)) {
@@ -98,7 +109,7 @@ bool ExecCommand::_fileExists(std::wstring path) {
 	return true;
 }
 
-std::string ExecCommand::_pathWinToPosix(std::wstring winpath) {
+std::string ExecCommand::_pathWinToPosix(const std::wstring& winpath) {
 	char buf[MAX_PATH + 1];
 	if (0 != cygwin_conv_path(
 			CCP_WIN_W_TO_POSIX, winpath.c_str(), buf, sizeof(buf))) {
@@ -107,9 +118,26 @@ std::string ExecCommand::_pathWinToPosix(std::wstring winpath) {
 	return std::string(buf);
 }
 
-std::wstring ExecCommand::_escapeArg(std::wstring arg) {
-	_replaceAll(arg, L"\"", L"\\\"");
-	return arg.insert(0, L"\"").append(L"\"");
+std::wstring ExecCommand::_toLongPath(const std::wstring& path) {
+	wchar_t buf[MAX_PATH + 1];
+	DWORD len = GetLongPathName(
+		path.c_str(), buf, sizeof(buf) / sizeof(buf[0]));
+	if (0 == len) {
+		return path;
+	}
+	return std::wstring(buf, len);
+}
+
+std::wstring ExecCommand::_escapeWinArg(const std::wstring& arg) {
+	std::wstring str = arg;
+	_replaceAll(str, L"\"", L"\\\"");
+	return str.insert(0, L"\"").append(L"\"");
+}
+
+std::wstring ExecCommand::_escapePosixArg(const std::wstring& arg) {
+	std::wstring str = arg;
+	_replaceAll(str, L"'", L"'\\\''");
+	return str.insert(0, L"'").append(L"'");
 }
 
 void ExecCommand::_replaceAll(std::wstring& str, const std::wstring& from,
@@ -134,7 +162,7 @@ std::wstring ExecCommand::_getEnvPath() {
 	return ss.str();
 }
 
-std::wstring ExecCommand::_getScriptName(std::wstring path) {
+std::wstring ExecCommand::_getScriptName(const std::wstring& path) {
 	wchar_t* buf = new wchar_t[path.size() + 1];
 	wcscpy(buf, path.c_str());
 	wchar_t *p = PathFindFileName(buf);
