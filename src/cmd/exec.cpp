@@ -57,10 +57,12 @@ std::vector<std::wstring> ExecCommand::_getExecArgs() {
 
 std::wstring ExecCommand::_getExecCmd() {
 	std::wstringstream ss;
+	/* TODO: determine codepage */
+	UINT cp = 28591;
 	for (auto arg : _getExecArgs()) {
 		/* convert Windows paths to Cygwin form */
 		if (_isWinPath(arg, true)) {
-			arg = mb_to_wide(_pathWinToPosix(_toLongPath(arg)));
+			arg = mb_to_wide(_pathWinToPosix(_toLongPath(arg)), cp);
 		}
 		ss << _escapePosixArg(arg) << L" ";
 	}
