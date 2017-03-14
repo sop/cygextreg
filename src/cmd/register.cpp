@@ -21,11 +21,24 @@ int RegisterCommand::run() {
 	Key key(*root, L"Software\\Classes");
 	switch (_cmd) {
 	case Command::REGISTER:
+		/* check whether extension is already registered for
+		   another application */
+		if (!_force && key.hasSubKey(ext)) {
+			if (!_isCygscriptExtension(key, ext)) {
+				throw std::runtime_error(
+						  _extension + " extension is already registered for"
+						  " another application. Use -f to override.");
+			}
+		}
 		_registerAction(key, ext);
 		_registerExtension(key, ext);
 		show_message(ext + L" extension registered.");
 		break;
 	case Command::UNREGISTER:
+		if (!key.hasSubKey(ext)) {
+			show_message(ext + L" extension is not registered.");
+			return 1;
+		}
 		_unregisterExtension(key, ext);
 		_unregisterAction(key, ext);
 		show_message(ext + L" extension unregistered.");
@@ -74,14 +87,8 @@ void RegisterCommand::_registerExtension(const IKey& parent,
 
 void RegisterCommand::_unregisterExtension(const IKey& parent,
                                            const std::wstring& ext) {
-	std::wstring handler = std::wstring(L"cygscript") + ext;
-	if (!parent.hasSubKey(ext)) {
-		throw std::runtime_error(std::string("Extension ") +
-		                         wide_to_mb(ext) + " not registered.");
-	}
-	Key key(parent, ext);
-	if (key.getString(L"") != handler) {
-		throw std::runtime_error("Not a Cygwin script extension.");
+	if (!_isCygscriptExtension(parent, ext)) {
+		throw std::runtime_error("Not a cygscript extension.");
 	}
 	parent.deleteSubTree(ext);
 }
@@ -101,14 +108,27 @@ std::wstring RegisterCommand::_getOpenCommand() {
 	wchar_t buf[MAX_PATH];
 	int ret = GetModuleFileName(NULL, buf, sizeof(buf));
 	if (0 == ret) {
-		THROW_LAST_ERROR("Failed to get executable path");
+		THROW_LAST_ERROR("Failed to get executable path.");
 	}
 	if (sizeof(buf) == ret && ERROR_INSUFFICIENT_BUFFER == GetLastError()) {
-		throw std::runtime_error("Failed to get executable path");
+		throw std::runtime_error("Failed to get executable path.");
 	}
 	std::wstringstream ss;
 	ss << L"\"" << std::wstring(buf, ret) << L"\"" << L" --exec -- \"%1\" %*";
 	return ss.str();
+}
+
+bool RegisterCommand::_isCygscriptExtension(const IKey& parent,
+                                            const std::wstring& ext) {
+	if (!parent.hasSubKey(ext)) {
+		return false;
+	}
+	Key key(parent, ext);
+	std::wstring handler = std::wstring(L"cygscript") + ext;
+	if (key.getString(L"") != handler) {
+		return false;
+	}
+	return true;
 }
 
 }

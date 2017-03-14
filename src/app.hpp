@@ -12,6 +12,7 @@ class App
 	enum class RegisterType { USER, EVERYONE };
 	RegisterType _regType;
 	std::string _extension;
+	bool _force;
 public:
 	App(const int argc, char* const argv[]);
 	int run();

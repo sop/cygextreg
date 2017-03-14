@@ -19,14 +19,17 @@ App::App(const int argc, char* const argv[]) :
 	_argv(argv),
 	_cmd(Command::NONE),
 	_regType(RegisterType::USER),
-	_extension(".sh") {
-	static const char *opts = "r::u::alehV";
+	_extension(".sh"),
+	_force(false) {
+	static const char *opts = "ruaflhV";
 	static const struct option longopts[] = {
-		{ "register", optional_argument, NULL, 'r' },
-		{ "unregister", optional_argument, NULL, 'u' },
+		{ "register", no_argument, NULL, 'r' },
+		{ "unregister", no_argument, NULL, 'u' },
+		{ "ext", required_argument, NULL, 'e' },
 		{ "all", no_argument, NULL, 'a' },
+		{ "force", no_argument, NULL, 'f' },
 		{ "list", no_argument, NULL, 'l' },
-		{ "exec", no_argument, NULL, 'e' },
+		{ "exec", no_argument, NULL, 'E' },
 		{ "version", no_argument, NULL, 'V' },
 		{ "help", no_argument, NULL, 'h' },
 		{ 0, 0, 0, 0 }
@@ -39,30 +42,39 @@ App::App(const int argc, char* const argv[]) :
 			break;
 		}
 		switch (c) {
+		/* --register */
 		case 'r':
 			_cmd = Command::REGISTER;
-			if (optarg) {
-				_extension = optarg;
-			}
 			break;
+		/* --unregister */
 		case 'u':
 			_cmd = Command::UNREGISTER;
-			if (optarg) {
-				_extension = optarg;
-			}
 			break;
+		/* --ext */
+		case 'e':
+			_extension = optarg;
+			break;
+		/* --all */
 		case 'a':
 			_regType = RegisterType::EVERYONE;
 			break;
+		/* --force */
+		case 'f':
+			_force = true;
+			break;
+		/* --list */
 		case 'l':
 			_cmd = Command::LIST;
 			break;
-		case 'e':
+		/* --exec */
+		case 'E':
 			_cmd = Command::EXEC;
 			break;
+		/* --version */
 		case 'V':
 			_printVersion();
 			exit(EXIT_SUCCESS);
+		/* --help */
 		case '?':
 		case 'h':
 		default:
@@ -92,9 +104,9 @@ int App::run() {
 			_checkElevated();
 		}
 		cmd = std::unique_ptr<RegisterCommand>(
-			new RegisterCommand(RegisterCommand::Command::REGISTER,
-			                    _extension,
-			                    _regType == RegisterType::EVERYONE));
+			new RegisterCommand(
+				RegisterCommand::Command::REGISTER, _extension,
+				_regType == RegisterType::EVERYONE, _force));
 		break;
 	/* unregister extension */
 	case Command::UNREGISTER:
@@ -102,9 +114,9 @@ int App::run() {
 			_checkElevated();
 		}
 		cmd = std::unique_ptr<RegisterCommand>(
-			new RegisterCommand(RegisterCommand::Command::UNREGISTER,
-			                    _extension,
-			                    _regType == RegisterType::EVERYONE));
+			new RegisterCommand(
+				RegisterCommand::Command::UNREGISTER, _extension,
+				_regType == RegisterType::EVERYONE, _force));
 		break;
 	/* list registered extensions */
 	case Command::LIST:
@@ -119,15 +131,16 @@ int App::run() {
 static char help[] =
 	""
 	"Options:\n"
-	"  -r, --register=EXT    Add filetype to Windows registry.\n"
-	"                          Default to .sh extension.\n"
-	"  -u, --unregister=EXT  Remove filetype from Windows registry.\n"
-	"                          Default to .sh extension.\n"
-	"  -a, --all             Register or unregister filetype for all users, \n"
-	"                          default to current user.\n"
-	"  -l, --list            List registry status.\n"
-	"  -h, --help            Display this help and exit.\n"
-	"  -V, --version         Print version and exit.\n";
+	"  -r, --register    Add filetype to Windows registry.\n"
+	"  -u, --unregister  Remove filetype from Windows registry.\n"
+	"      --ext=EXT     Register or unregister files of given extension,\n"
+	"                      default to .sh\n"
+	"  -a, --all         Register or unregister filetype for all users,\n"
+	"                      default to current user.\n"
+	"  -f, --force       Overwrite if already registered for another application.\n"
+	"  -l, --list        List registry status.\n"
+	"  -h, --help        Display this help and exit.\n"
+	"  -V, --version     Print version and exit.\n";
 
 void App::_printUsage(char *progname) {
 	std::stringstream ss;
