@@ -26,9 +26,9 @@ To unregister filetype:
 
     cygscript -u
 
-To register another filetype, pass the extension as an argument:
+To register another filetype, pass the extension as an --ext argument:
 
-    cygscript -rbash
+    cygscript -r --ext bash
 
 ## License
 This project is licensed under the [MIT License](https://github.com/sop/cygscript/blob/master/LICENSE).
