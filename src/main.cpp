@@ -6,6 +6,7 @@
 #include "util/message.hpp"
 
 int main(const int argc, char* const argv[]) {
+	setlocale(LC_ALL, "C.UTF-8");
 	try {
 		cygscript::App app(argc, argv);
 		return app.run();

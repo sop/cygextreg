@@ -32,7 +32,7 @@ int ExecCommand::run() {
 			sizeof(w_pathbuf))) {
 		throw std::runtime_error(strerror(errno));
 	}
-	cmd_line << w_pathbuf << L" -o Charset=UTF-8"
+	cmd_line << w_pathbuf << L" -o Locale=C -o Charset=UTF-8"
 	         << L" -t " << _escapeWinArg(script_name)
 	         << L" --exec /bin/bash -il -c ";
 	cmd_line << _escapeWinArg(_getExecCmd());
@@ -57,8 +57,7 @@ std::vector<std::wstring> ExecCommand::_getExecArgs() {
 
 std::wstring ExecCommand::_getExecCmd() {
 	std::wstringstream ss;
-	/* TODO: determine codepage */
-	UINT cp = 28591;
+	UINT cp = 28591; /* ISO-8859-1 */
 	for (auto arg : _getExecArgs()) {
 		/* convert Windows paths to Cygwin form */
 		if (_isWinPath(arg, true)) {
