@@ -34,7 +34,7 @@ int ExecCommand::run() {
 	}
 	cmd_line << w_pathbuf << L" -o Charset=UTF-8"
 	         << L" -t " << _escapeWinArg(script_name)
-	         << L" --exec /bin/sh -il -c ";
+	         << L" --exec /bin/bash -il -c ";
 	cmd_line << _escapeWinArg(_getExecCmd());
 	_execute(cmd_line.str());
 	return 0;
@@ -64,12 +64,10 @@ std::wstring ExecCommand::_getExecCmd() {
 		}
 		ss << _escapePosixArg(arg) << L" ";
 	}
-	std::wstring cmd = ss.str();
-	/* remove leading space */
-	if (cmd.size()) {
-		cmd.pop_back();
-	}
-	return cmd;
+	/* if script exists with a non-zero exit code, keep terminal open
+	   until keypress */
+	ss << L"|| { echo \"Process exited with code $?\"; read -n 1 -s; }";
+	return ss.str();
 }
 
 void ExecCommand::_execute(const std::wstring& cmd_line) {
