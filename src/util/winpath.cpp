@@ -28,9 +28,9 @@ CygPath WinPathW::cygPath(bool keep_relative) const {
 	return CygPath(std::string(tmp.get()));
 }
 
-WinPathW WinPathW::longPath() const {
+WinPathW WinPathW::longPath(bool extended) const {
 	std::wstring path = _path;
-	if (path.substr(0, 4) != L"\\\\?\\") {
+	if (extended && path.substr(0, 4) != L"\\\\?\\") {
 		path.insert(0, L"\\\\?\\");
 	}
 	wchar_t buf[MAX_PATH + 1];

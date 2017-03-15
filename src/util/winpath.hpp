@@ -59,9 +59,11 @@ public:
 	/**
 	 * Convert to long path.
 	 *
+	 * @param bool extended Whether to return extended-length path
+	 *                      prefixed with \\?\
 	 * @return WinPathW Long path
 	 */
-	WinPathW longPath() const;
+	WinPathW longPath(bool extended = false) const;
 };
 
 }

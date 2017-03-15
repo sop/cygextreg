@@ -3,6 +3,7 @@
 #include <memory>
 #include <string.h>
 #include <sys/cygwin.h>
+#include "app.hpp"
 #include "util/strconv.hpp"
 #include "util/message.hpp"
 #include "util/cygpath.hpp"
@@ -95,22 +96,15 @@ void RegisterCommand::_unregisterExtension(const IKey& parent,
 }
 
 std::wstring RegisterCommand::_getDefaultIcon() {
-	std::wstring icon = CygPath("/Cygwin-Terminal.ico").winPath().str();
+	std::wstring icon = App::getPath().longPath();
 	icon += L",0";
 	return icon;
 }
 
 std::wstring RegisterCommand::_getOpenCommand() {
-	wchar_t buf[MAX_PATH];
-	int ret = GetModuleFileName(NULL, buf, sizeof(buf));
-	if (0 == ret) {
-		THROW_LAST_ERROR("Failed to get executable path.");
-	}
-	if (sizeof(buf) == ret && ERROR_INSUFFICIENT_BUFFER == GetLastError()) {
-		throw std::runtime_error("Failed to get executable path.");
-	}
+	std::wstring path = App::getPath().longPath();
 	std::wstringstream ss;
-	ss << L"\"" << std::wstring(buf, ret) << L"\"" << L" --exec -- \"%1\" %*";
+	ss << L"\"" << path << L"\"" << L" --exec -- \"%1\" %*";
 	return ss.str();
 }
 

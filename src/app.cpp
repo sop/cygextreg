@@ -8,6 +8,7 @@
 #include "cmd/register.hpp"
 #include "cmd/exec.hpp"
 #include "cmd/list.hpp"
+#include "util/winerror.hpp"
 #include "util/elevated.hpp"
 #include "util/strconv.hpp"
 #include "util/message.hpp"
@@ -126,6 +127,19 @@ int App::run() {
 		return 1;
 	}
 	return cmd->run();
+}
+
+WinPathW App::getPath() {
+	wchar_t buf[MAX_PATH + 1];
+	DWORD ret = GetModuleFileName(NULL, buf, sizeof(buf) / sizeof(buf[0]));
+	if (0 == ret) {
+		THROW_LAST_ERROR("Failed to get executable path.");
+	}
+	if (sizeof(buf) / sizeof(buf[0]) == ret &&
+	    ERROR_INSUFFICIENT_BUFFER == GetLastError()) {
+		throw std::runtime_error("Failed to get executable path.");
+	}
+	return WinPathW(std::wstring(buf, ret));
 }
 
 static char help[] =

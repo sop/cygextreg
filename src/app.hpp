@@ -1,5 +1,6 @@
 #include <vector>
 #include <string>
+#include "util/winpath.hpp"
 
 namespace cygscript {
 
@@ -28,6 +29,13 @@ public:
 	 * @return int Exit code
 	 */
 	int run();
+
+	/**
+	 * Get Windows path to this application.
+	 *
+	 * @return WinPathW Windows path
+	 */
+	static WinPathW getPath();
 private:
 	/**
 	 * Print application usage.
