@@ -1,34 +1,72 @@
 #include "command.hpp"
 #include <string>
+#include <memory>
 #include <exception>
+#include "util/strconv.hpp"
 #include "registry/key.hpp"
 
 using namespace registry;
 
 namespace cygscript {
 
-class RegisterCommand : public ICommand
+class BaseRegisterCommand : public ICommand
 {
 public:
-	enum class Command { REGISTER, UNREGISTER };
-
 	/**
 	 * Constructor.
 	 *
-	 * @param Command cmd Command to perform
 	 * @param const std::string& ext Extension
 	 * @param bool forAll Whether to register or unregister for all users
-	 * @param bool force Force registration if extension is already registered
 	 */
-	RegisterCommand(Command cmd, const std::string& ext,
-	                bool forAll, bool force) :
-		_cmd(cmd),
-		_extension(ext),
-		_forAllUsers(forAll),
-		_force(force) {
-		if ('.' != _extension[0]) {
+	BaseRegisterCommand(const std::string& ext, bool forAll) :
+		_extension(mb_to_wide(ext)),
+		_forAllUsers(forAll) {
+		if (L'.' != _extension[0]) {
 			throw std::runtime_error("Extension must start with a dot.");
 		}
+	}
+	virtual ~BaseRegisterCommand() {
+	}
+protected:
+	std::wstring _extension;
+	bool _forAllUsers;
+
+	/**
+	 * Get root registry key.
+	 *
+	 * Shall open either HKEY_LOCAL_MACHINE or HKEY_CURRENT_USER.
+	 *
+	 * @return IKey Registry key
+	 */
+	std::unique_ptr<IKey> _getRootKey() const;
+
+	/**
+	 * Check whether extension is registered for cygscript.
+	 *
+	 * @param const IKey& parent Parent key
+	 * @return bool True if registered for cygscript
+	 */
+	bool _isCygscriptExtension(const IKey& parent) const;
+};
+
+class RegisterCommand : public BaseRegisterCommand
+{
+	std::string _iconPath;
+	bool _force;
+public:
+	/**
+	 * Constructor.
+	 *
+	 * @param const std::string& ext Extension
+	 * @param const std::string& icon Path and index to icon
+	 * @param bool forAll Whether to register for all users
+	 * @param bool force Force registration if extension is already registered
+	 */
+	RegisterCommand(const std::string& ext, const std::string& icon,
+	                bool forAll, bool force) :
+		BaseRegisterCommand(ext, forAll),
+		_iconPath(icon),
+		_force(force) {
 	}
 
 	/**
@@ -37,43 +75,27 @@ public:
 	 * @return int Exit code
 	 */
 	int run();
-private:
-	Command _cmd;
-	std::string _extension;
-	bool _forAllUsers;
-	bool _force;
 
 	/**
 	 * Create handler key into registry.
 	 *
 	 * @param const IKey& parent Parent key
-	 * @param const std::wstring& ext Extension
 	 */
-	void _registerAction(const IKey& parent, const std::wstring& ext);
-
-	/**
-	 * Remove handler key from registry.
-	 *
-	 * @param const IKey& parent Parent key
-	 * @param const std::wstring& ext Extension
-	 */
-	void _unregisterAction(const IKey& parent, const std::wstring& ext);
+	void _registerAction(const IKey& parent);
 
 	/**
 	 * Create extension key into registry.
 	 *
 	 * @param const IKey& parent Parent key
-	 * @param const std::wstring& ext Extension
 	 */
-	void _registerExtension(const IKey& parent, const std::wstring& ext);
+	void _registerExtension(const IKey& parent);
 
 	/**
-	 * Remove extension key from registry.
+	 * Get path and index to script's icon.
 	 *
-	 * @param const IKey& parent Parent key
-	 * @param const std::wstring& ext Extension
+	 * @return std::wstring Icon path with ",<idx>" suffix
 	 */
-	void _unregisterExtension(const IKey& parent, const std::wstring& ext);
+	std::wstring _getIconPath();
 
 	/**
 	 * Get path to default icon for the filetype.
@@ -88,15 +110,41 @@ private:
 	 * @return std::wstring Command
 	 */
 	std::wstring _getOpenCommand();
+};
+
+class UnregisterCommand : public BaseRegisterCommand
+{
+public:
+	/**
+	 * Constructor.
+	 *
+	 * @param const std::string& ext Extension
+	 * @param bool forAll Whether to unregister from all users
+	 */
+	UnregisterCommand(const std::string& ext, bool forAll) :
+		BaseRegisterCommand(ext, forAll) {
+	}
 
 	/**
-	 * Check whether given extension is registered for cygscript.
+	 * Run command.
+	 *
+	 * @return int Exit code
+	 */
+	int run();
+
+	/**
+	 * Remove handler key from registry.
 	 *
 	 * @param const IKey& parent Parent key
-	 * @param const std::wstring& ext Extension
-	 * @return bool True if registered for cygscript
 	 */
-	bool _isCygscriptExtension(const IKey& parent, const std::wstring& ext);
+	void _unregisterAction(const IKey& parent);
+
+	/**
+	 * Remove extension key from registry.
+	 *
+	 * @param const IKey& parent Parent key
+	 */
+	void _unregisterExtension(const IKey& parent);
 };
 
 }

@@ -13,6 +13,7 @@ class App
 	enum class RegisterType { USER, EVERYONE };
 	RegisterType _regType;
 	std::string _extension;
+	std::string _iconPath;
 	bool _force;
 public:
 	/**

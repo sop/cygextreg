@@ -21,12 +21,14 @@ App::App(const int argc, char* const argv[]) :
 	_cmd(Command::NONE),
 	_regType(RegisterType::USER),
 	_extension(".sh"),
+	_iconPath(std::string()),
 	_force(false) {
 	static const char *opts = "ruaflhV";
 	static const struct option longopts[] = {
 		{ "register", no_argument, NULL, 'r' },
 		{ "unregister", no_argument, NULL, 'u' },
 		{ "ext", required_argument, NULL, 'e' },
+		{ "icon", required_argument, NULL, 'i' },
 		{ "all", no_argument, NULL, 'a' },
 		{ "force", no_argument, NULL, 'f' },
 		{ "list", no_argument, NULL, 'l' },
@@ -54,6 +56,10 @@ App::App(const int argc, char* const argv[]) :
 		/* --ext */
 		case 'e':
 			_extension = optarg;
+			break;
+		/* --icon */
+		case 'i':
+			_iconPath = optarg;
 			break;
 		/* --all */
 		case 'a':
@@ -105,19 +111,17 @@ int App::run() {
 			_checkElevated();
 		}
 		cmd = std::unique_ptr<RegisterCommand>(
-			new RegisterCommand(
-				RegisterCommand::Command::REGISTER, _extension,
-				_regType == RegisterType::EVERYONE, _force));
+			new RegisterCommand(_extension, _iconPath,
+			                    _regType == RegisterType::EVERYONE, _force));
 		break;
 	/* unregister extension */
 	case Command::UNREGISTER:
 		if (_regType == RegisterType::EVERYONE) {
 			_checkElevated();
 		}
-		cmd = std::unique_ptr<RegisterCommand>(
-			new RegisterCommand(
-				RegisterCommand::Command::UNREGISTER, _extension,
-				_regType == RegisterType::EVERYONE, _force));
+		cmd = std::unique_ptr<UnregisterCommand>(
+			new UnregisterCommand(_extension,
+			                      _regType == RegisterType::EVERYONE));
 		break;
 	/* list registered extensions */
 	case Command::LIST:
@@ -145,16 +149,17 @@ WinPathW App::getPath() {
 static char help[] =
 	""
 	"Options:\n"
-	"  -r, --register    Add filetype to Windows registry.\n"
-	"  -u, --unregister  Remove filetype from Windows registry.\n"
-	"      --ext=EXT     Register or unregister files of given extension,\n"
-	"                      default to .sh\n"
-	"  -a, --all         Register or unregister filetype for all users,\n"
-	"                      default to current user.\n"
-	"  -f, --force       Overwrite if already registered for another application.\n"
-	"  -l, --list        List registry status.\n"
-	"  -h, --help        Display this help and exit.\n"
-	"  -V, --version     Print version and exit.\n";
+	"  -r, --register     Add file type to Windows registry.\n"
+	"  -u, --unregister   Remove file type from Windows registry.\n"
+	"      --ext=EXT      Register or unregister files of given extension,\n"
+	"                       default to .sh\n"
+	"      --icon=PATH,N  Path and index of the icon to register for file type.\n"
+	"  -a, --all          Register or unregister file type for all users,\n"
+	"                       default to current user.\n"
+	"  -f, --force        Overwrite if already registered for another application.\n"
+	"  -l, --list         List registry status.\n"
+	"  -h, --help         Display this help and exit.\n"
+	"  -V, --version      Print version and exit.\n";
 
 void App::_printUsage(char *progname) {
 	std::stringstream ss;
