@@ -21,18 +21,46 @@ class WinPathW : public IWinPath
 {
 	std::wstring _path;
 public:
+	/**
+	 * Constructor.
+	 *
+	 * @param const std::wstring& path Path in Windows format
+	 */
 	WinPathW(const std::wstring& path) :
 		_path(path) {
 	}
-	~WinPathW() {
-	}
+
+	/**
+	 * Cast to wstring.
+	 *
+	 * @return std::wstring Path
+	 */
 	operator std::wstring() {
 		return _path;
 	}
+
+	/**
+	 * Get path as a wstring.
+	 *
+	 * @return std::wstring Path
+	 */
 	std::wstring str() const {
 		return _path;
 	}
+
+	/**
+	 * Convert to Cygwin path.
+	 *
+	 * @param bool keep_relative Whether to keep path relative
+	 * @return CygPath Cygwin path
+	 */
 	CygPath cygPath(bool keep_relative = false) const;
+
+	/**
+	 * Convert to long path.
+	 *
+	 * @return WinPathW Long path
+	 */
 	WinPathW longPath() const;
 };
 

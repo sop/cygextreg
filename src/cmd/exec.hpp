@@ -8,10 +8,19 @@ class ExecCommand : public ICommand
 {
 	std::vector<std::wstring> _args;
 public:
+	/**
+	 * Constructor.
+	 *
+	 * @param std::vector<std::wstring> args Wide arguments from main function
+	 */
 	ExecCommand(std::vector<std::wstring> args) : _args(args) {
 	}
-	~ExecCommand() {
-	}
+
+	/**
+	 * Run command.
+	 *
+	 * @return int Exit code
+	 */
 	int run();
 private:
 	/**

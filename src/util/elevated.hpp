@@ -12,11 +12,20 @@ namespace cygscript {
 class ElevatedProcess
 {
 public:
-	ElevatedProcess() {
-	}
-	~ElevatedProcess() {
-	}
+	/**
+	 * Check whether current process is being executed with admin privileges.
+	 *
+	 * @return bool True if running with admin privileges
+	 */
 	bool isAdmin() const;
+
+	/**
+	 * Restart current process with elevated privileges.
+	 *
+	 * @param int argc Argc from main function
+	 * @param char* const argv[] Argv from main function
+	 * @return HINSTANCE Handle to process
+	 */
 	HINSTANCE startElevated(int argc, char* const argv[]);
 private:
 	class ImpersonationToken;

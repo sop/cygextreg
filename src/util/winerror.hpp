@@ -28,8 +28,6 @@ public:
 	WinError(DWORD err) :
 		_err(err) {
 	};
-	~WinError() {
-	};
 	operator std::wstring() const;
 	operator std::string() const;
 private:

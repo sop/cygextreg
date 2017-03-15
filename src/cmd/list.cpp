@@ -81,8 +81,8 @@ std::vector<std::wstring> ListCommand::_searchRegisteredExtensions(
 	return exts;
 }
 
-bool ListCommand::_isRegistered(const IKey& parent, const std::wstring& ext) {
-	Key base(parent, L"Software\\Classes", KEY_QUERY_VALUE);
+bool ListCommand::_isRegistered(const IKey& root, const std::wstring& ext) {
+	Key base(root, L"Software\\Classes", KEY_QUERY_VALUE);
 	if (!base.hasSubKey(ext)) {
 		return false;
 	}

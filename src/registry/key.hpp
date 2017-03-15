@@ -24,7 +24,20 @@ public:
 	operator HKEY() const {
 		return _hKey;
 	}
+
+	/**
+	 * Check whether key has a subkey.
+	 *
+	 * @param const std::wstring& subkey Key name
+	 * @return bool True if subkey exists
+	 */
 	bool hasSubKey(const std::wstring& subkey) const;
+
+	/**
+	 * Delete registry tree of given subkey.
+	 *
+	 * @param const std::wstring& subkey Key name
+	 */
 	void deleteSubTree(const std::wstring& subkey) const;
 protected:
 	HKEY _hKey;
@@ -35,8 +48,22 @@ class Key : public IKey
 public:
 	Key(HKEY hKey) : IKey(hKey) {
 	}
+
+	/**
+	 * Constructor.
+	 *
+	 * Open existing registry key.
+	 *
+	 * @param const IKey& parent Parent key
+	 * @param const std::wstring& subkey Subkey name
+	 * @param REGSAM access Requested permissions
+	 */
 	Key(const IKey& parent, const std::wstring& subkey,
 	    REGSAM access = KEY_ALL_ACCESS);
+
+	/**
+	 * Copy constructor.
+	 */
 	Key(const Key& rhs) : IKey() {
 		if (!DuplicateHandle(
 				GetCurrentProcess(), rhs._hKey,
@@ -49,11 +76,52 @@ public:
 		rhs._hKey = NULL;
 	}
 	~Key();
+
+	/**
+	 * Create new registry key.
+	 *
+	 * @param const IKey& parent Parent key
+	 * @param const std::wstring& subkey Key name
+	 * @param REGSAM access Requested permissions
+	 * @return Key Created key
+	 */
 	static Key create(const IKey& parent, const std::wstring& subkey,
 	                  REGSAM access = KEY_ALL_ACCESS);
+
+	/**
+	 * Check whether value exists.
+	 *
+	 * @param const std::wstring& name Value name
+	 * @param DWORD type Value type
+	 * @return bool True if exists
+	 */
 	bool valueExists(const std::wstring& name, DWORD type = RRF_RT_ANY) const;
-	const Key& setString(const std::wstring& name, std::wstring value) const;
+
+	/**
+	 * Set string value.
+	 *
+	 * @param const std::wstring& name Value name, empty string to set default
+	 * @param const std::wstring& value Value
+	 * @return const Key& Self
+	 */
+	const Key& setString(const std::wstring& name,
+	                     const std::wstring& value) const;
+
+	/**
+	 * Get string value.
+	 *
+	 * @param const std::wstring& name Value name, empty string for default
+	 * @return std::wstring Value
+	 */
 	std::wstring getString(const std::wstring& name) const;
+
+	/**
+	 * Set DWORD value.
+	 *
+	 * @param const std::wstring& name Value name, empty string to set default
+	 * @param DWORD value value Value
+	 * @return const Key& Self
+	 */
 	const Key& setDword(const std::wstring& name, DWORD value) const;
 };
 

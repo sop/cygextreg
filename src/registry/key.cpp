@@ -58,7 +58,8 @@ bool Key::valueExists(const std::wstring& name, DWORD type) const {
 	return false;
 }
 
-const Key& Key::setString(const std::wstring& name, std::wstring value) const {
+const Key& Key::setString(const std::wstring& name,
+                          const std::wstring& value) const {
 	LONG status = RegSetValueEx(
 		_hKey, name.c_str(), 0, REG_SZ,
 		(LPBYTE)value.c_str(),
