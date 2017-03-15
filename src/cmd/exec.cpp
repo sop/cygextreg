@@ -7,6 +7,8 @@
 #include <sys/stat.h>
 #include <windows.h>
 #include <shlwapi.h>
+#include "util/cygpath.hpp"
+#include "util/winpath.hpp"
 #include "util/strconv.hpp"
 #include "util/winerror.hpp"
 #include "util/message.hpp"
@@ -15,27 +17,22 @@
 namespace cygscript {
 
 int ExecCommand::run() {
-	wchar_t w_pathbuf[MAX_PATH + 1];
 	std::vector<std::wstring> exec_args = _getExecArgs();
 	if (0 == exec_args.size()) {
 		throw std::runtime_error("Missing executable script.");
 	}
 	std::wstring script_path = exec_args[0];
-	std::wstring script_name = _getScriptName(script_path);
 	if (!_fileExists(script_path)) {
 		throw std::runtime_error("Script not found.");
 	}
+	std::wstring script_name = _getScriptName(script_path);
 	std::wstringstream cmd_line;
 	/* Windows path to mintty.exe */
-	if (0 != cygwin_conv_path(
-			CCP_POSIX_TO_WIN_W, "/bin/mintty.exe", w_pathbuf,
-			sizeof(w_pathbuf))) {
-		throw std::runtime_error(strerror(errno));
-	}
-	cmd_line << w_pathbuf << L" -o Locale=C -o Charset=UTF-8"
+	WinPathW mintty = CygPath("/bin/mintty.exe").winPath();
+	cmd_line << mintty.str() << L" -o Locale=C -o Charset=UTF-8"
 	         << L" -t " << _escapeWinArg(script_name)
-	         << L" --exec /bin/bash -il -c ";
-	cmd_line << _escapeWinArg(_getExecCmd());
+	         << L" --exec /bin/bash -il -c "
+	         << _escapeWinArg(_getExecCmd());
 	_execute(cmd_line.str());
 	return 0;
 }
@@ -97,7 +94,7 @@ bool ExecCommand::_isWinPath(const std::wstring& path, bool must_exist) {
 }
 
 bool ExecCommand::_fileExists(const std::wstring& path) {
-	std::string posix_path = _pathWinToPosix(path);
+	std::string posix_path = CygPath(WinPathW(path));
 	struct stat s;
 	if (-1 == stat(posix_path.c_str(), &s)) {
 		return false;
@@ -108,23 +105,12 @@ bool ExecCommand::_fileExists(const std::wstring& path) {
 	return true;
 }
 
-std::string ExecCommand::_pathWinToPosix(const std::wstring& winpath) {
-	char buf[MAX_PATH + 1];
-	if (0 != cygwin_conv_path(
-			CCP_WIN_W_TO_POSIX, winpath.c_str(), buf, sizeof(buf))) {
-		throw std::runtime_error(strerror(errno));
-	}
-	return std::string(buf);
+std::string ExecCommand::_pathWinToPosix(const std::wstring& path) {
+	return CygPath(WinPathW(path)).str();
 }
 
 std::wstring ExecCommand::_toLongPath(const std::wstring& path) {
-	wchar_t buf[MAX_PATH + 1];
-	DWORD len = GetLongPathName(
-		path.c_str(), buf, sizeof(buf) / sizeof(buf[0]));
-	if (0 == len) {
-		return path;
-	}
-	return std::wstring(buf, len);
+	return WinPathW(path).longPath().str();
 }
 
 std::wstring ExecCommand::_escapeWinArg(const std::wstring& arg) {
@@ -149,15 +135,10 @@ void ExecCommand::_replaceAll(std::wstring& str, const std::wstring& from,
 }
 
 std::wstring ExecCommand::_getEnvPath() {
-	wchar_t buf[MAX_PATH + 1];
+	std::wstring cygroot = CygPath("/").winPath().str();
 	std::wstring curpath = env::EnvVar(L"PATH").get();
-	if (0 != cygwin_conv_path(
-			CCP_POSIX_TO_WIN_W, "/", buf, sizeof(buf))) {
-		throw std::runtime_error(strerror(errno));
-	}
-	std::wstring cygdir(buf);
 	std::wstringstream ss;
-	ss << cygdir << L"\\usr\\local\\bin;" << cygdir << L"\\bin;" << curpath;
+	ss << cygroot << L"\\usr\\local\\bin;" << cygroot << L"\\bin;" << curpath;
 	return ss.str();
 }
 

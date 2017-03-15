@@ -5,6 +5,7 @@
 #include <sys/cygwin.h>
 #include "util/strconv.hpp"
 #include "util/message.hpp"
+#include "util/cygpath.hpp"
 
 namespace cygscript {
 
@@ -94,14 +95,9 @@ void RegisterCommand::_unregisterExtension(const IKey& parent,
 }
 
 std::wstring RegisterCommand::_getDefaultIcon() {
-	wchar_t buf[MAX_PATH + 16];
-	if(0 != cygwin_conv_path(
-		   CCP_POSIX_TO_WIN_W, "/Cygwin-Terminal.ico", buf, sizeof(buf))) {
-		throw std::runtime_error(strerror(errno));
-	}
-	std::wstring str(buf);
-	str += L",0";
-	return str;
+	std::wstring icon = CygPath("/Cygwin-Terminal.ico").winPath().str();
+	icon += L",0";
+	return icon;
 }
 
 std::wstring RegisterCommand::_getOpenCommand() {

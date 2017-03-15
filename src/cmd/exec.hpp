@@ -56,10 +56,10 @@ private:
 	/**
 	 * Convert Windows path to POSIX format.
 	 *
-	 * @param std::wstring winpath Windows formatted path
+	 * @param std::wstring path Windows formatted path
 	 * @return std::string POSIX path in UTF-8 charset
 	 */
-	std::string _pathWinToPosix(const std::wstring& winpath);
+	std::string _pathWinToPosix(const std::wstring& path);
 
 	/**
 	 * Convert 8.3 short path to long path format.
