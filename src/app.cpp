@@ -169,6 +169,7 @@ void App::_printVersion() {
 	std::cout << "cygscript " << VERSION << std::endl;
 	std::cout << "Copyright (C) 2017 Joni Eskelinen" << std::endl;
 	std::cout << "License MIT: The MIT License" << std::endl;
+	std::cout << "Icons: Tango Desktop Project" << std::endl;
 }
 
 std::vector<std::wstring> App::_wideArgs() {
