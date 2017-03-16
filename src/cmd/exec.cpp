@@ -115,6 +115,7 @@ std::wstring ExecCommand::_toLongPath(const std::wstring& path) {
 
 std::wstring ExecCommand::_escapeWinArg(const std::wstring& arg) {
 	std::wstring str = arg;
+	_replaceAll(str, L"\\", L"\\\\");
 	_replaceAll(str, L"\"", L"\\\"");
 	return str.insert(0, L"\"").append(L"\"");
 }
