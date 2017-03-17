@@ -54,11 +54,16 @@ std::vector<std::wstring> ExecCommand::_getExecArgs() {
 
 std::wstring ExecCommand::_getExecCmd() {
 	std::wstringstream ss;
-	UINT cp = 28591; /* ISO-8859-1 */
 	for (auto arg : _getExecArgs()) {
 		/* convert Windows paths to Cygwin form */
 		if (_isWinPath(arg, true)) {
-			arg = mb_to_wide(_pathWinToPosix(_toLongPath(arg)), cp);
+			/* Posix path is represented in UTF-8 encoding. However, we must
+			   pass the path as a wide string to CreateProcess.
+			   The trick is to interpret UTF-8 sequence as an ISO-8859-1
+			   and encode it to UTF-16. When Cygwin decodes Windows command
+			   line back to C-locale, it receives the original UTF-8 sequence.
+			 */
+			arg = mb_to_wide(_pathWinToPosix(_toLongPath(arg)), 28591);
 		}
 		ss << _escapePosixArg(arg) << L" ";
 	}
