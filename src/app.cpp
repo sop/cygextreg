@@ -15,6 +15,9 @@
 
 namespace cygscript {
 
+/* type of native WinApi GetCommandLineW */
+typedef LPWSTR (__stdcall* native_GetCommandLineW)(void);
+
 App::App(const int argc, char* const argv[]) :
 	_argc(argc),
 	_argv(argv),
@@ -182,7 +185,13 @@ std::vector<std::wstring> App::_wideArgs() {
 	std::vector<std::wstring> args;
 	LPWSTR* argv;
 	int argc;
-	argv = CommandLineToArgvW(GetCommandLine(), &argc);
+	/* use native WinApi GetCommandLineW since Cygwin hooks it */
+	native_GetCommandLineW fn = (native_GetCommandLineW)GetProcAddress(
+		GetModuleHandle(L"kernel32.dll"), "GetCommandLineW");
+	if (NULL == fn) {
+		THROW_LAST_ERROR("Failed to import GetCommandLineW");
+	}
+	argv = CommandLineToArgvW(fn(), &argc);
 	/* if Windows command line has less arguments than what was
 	   passed to the main(), then application was invoked from Cygwin shell. */
 	if (argc < _argc) {
