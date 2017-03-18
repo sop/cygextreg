@@ -3,9 +3,17 @@
 # Cygscript
 A helper program allowing to register an extension *(eg. `.sh`)* to be
 executed in [Cygwin](https://www.cygwin.com/) by double-clicking a file from
-Windows explorer or dropping a file to an icon of a registered extension.
+Windows explorer or dragging and dropping files to an icon of a registered extension.
 
-## Installation
+## Installing from source
+Install Cygwin packages:
+
+    gcc-g++ make automake autoconf
+
+Clone source:
+
+    git clone https://github.com/sop/cygscript.git
+
 Prepare environment:
 
     aclocal && autoheader && automake --add-missing && autoconf
