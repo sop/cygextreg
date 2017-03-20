@@ -47,6 +47,14 @@ protected:
 	 * @return bool True if registered for cygscript
 	 */
 	bool _isCygscriptExtension(const IKey& parent) const;
+
+	/**
+	 * Get program path that is registered for open command.
+	 *
+	 * @param const IKey& handler Handler registry key
+	 * @return std::wstring Path
+	 */
+	std::wstring _getOpenCommandProg(const IKey& handler) const;
 };
 
 class RegisterCommand : public BaseRegisterCommand

@@ -27,7 +27,28 @@ bool BaseRegisterCommand::_isCygscriptExtension(const IKey& parent) const {
 	if (key.getString(L"") != handler) {
 		return false;
 	}
+	/* check that extension is registered for this cygscript instance */
+	try {
+		std::wstring prog = _getOpenCommandProg(Key(parent, handler));
+		if (prog != App::getPath().longPath().str()) {
+			return false;
+		}
+	} catch(...) {
+		return false;
+	}
 	return true;
+}
+
+std::wstring BaseRegisterCommand::_getOpenCommandProg(
+	const IKey& handler) const {
+	std::wstring command = Key(
+		handler, L"shell\\open\\command", KEY_QUERY_VALUE).getString(L"");
+	int argc;
+	LPWSTR* argv = CommandLineToArgvW(command.c_str(), &argc);
+	if (NULL == argv || argc < 1) {
+		throw std::runtime_error("No open command.");
+	}
+	return std::wstring(argv[0]);
 }
 
 int RegisterCommand::run() {

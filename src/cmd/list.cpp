@@ -86,11 +86,34 @@ bool ListCommand::_isRegistered(const IKey& root, const std::wstring& ext) {
 	if (!base.hasSubKey(ext)) {
 		return false;
 	}
+	/* check that handler matches the extension */
 	Key key(base, ext, KEY_QUERY_VALUE);
-	if (key.getString(L"") != std::wstring(L"cygscript") + ext) {
+	std::wstring action = std::wstring(L"cygscript") + ext;
+	if (key.getString(L"") != action) {
+		return false;
+	}
+	/* check the program path of open command */
+	try {
+		std::wstring prog =
+			_getOpenCommandProg(Key(base, action, KEY_QUERY_VALUE));
+		if (prog != _progPath) {
+			return false;
+		}
+	} catch(...) {
 		return false;
 	}
 	return true;
+}
+
+std::wstring ListCommand::_getOpenCommandProg(const IKey& handler) {
+	std::wstring command = Key(
+		handler, L"shell\\open\\command", KEY_QUERY_VALUE).getString(L"");
+	int argc;
+	LPWSTR* argv = CommandLineToArgvW(command.c_str(), &argc);
+	if (NULL == argv || argc < 1) {
+		throw std::runtime_error("No open command.");
+	}
+	return std::wstring(argv[0]);
 }
 
 }

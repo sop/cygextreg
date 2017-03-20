@@ -1,4 +1,5 @@
 #include "command.hpp"
+#include "app.hpp"
 #include <vector>
 #include "registry/key.hpp"
 
@@ -10,12 +11,20 @@ class ListCommand : public ICommand
 {
 public:
 	/**
+	 * Constructor.
+	 */
+	ListCommand() :
+		_progPath(App::getPath().longPath()) {
+	}
+	/**
 	 * Run command.
 	 *
 	 * @return int Exit code
 	 */
 	int run();
 private:
+	std::wstring _progPath;
+
 	/**
 	 * Search for registered cygscript extensions.
 	 *
@@ -32,6 +41,14 @@ private:
 	 * @return bool True if registered
 	 */
 	bool _isRegistered(const IKey& root, const std::wstring& ext);
+
+	/**
+	 * Get program path that is registered for open command.
+	 *
+	 * @param const IKey& handler Handler registry key
+	 * @return std::wstring Path
+	 */
+	std::wstring _getOpenCommandProg(const IKey& handler);
 };
 
 }
