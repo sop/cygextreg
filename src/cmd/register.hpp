@@ -27,6 +27,7 @@ public:
 	}
 	virtual ~BaseRegisterCommand() {
 	}
+
 protected:
 	std::wstring _extension;
 	bool _forAllUsers;
@@ -39,28 +40,13 @@ protected:
 	 * @return IKey Registry key
 	 */
 	std::unique_ptr<IKey> _getRootKey() const;
-
-	/**
-	 * Check whether extension is registered for cygscript.
-	 *
-	 * @param const IKey& parent Parent key
-	 * @return bool True if registered for cygscript
-	 */
-	bool _isCygscriptExtension(const IKey& parent) const;
-
-	/**
-	 * Get program path that is registered for open command.
-	 *
-	 * @param const IKey& handler Handler registry key
-	 * @return std::wstring Path
-	 */
-	std::wstring _getOpenCommandProg(const IKey& handler) const;
 };
 
 class RegisterCommand : public BaseRegisterCommand
 {
 	std::string _iconPath;
 	bool _force;
+
 public:
 	/**
 	 * Constructor.
@@ -85,20 +71,6 @@ public:
 	int run();
 
 	/**
-	 * Create handler key into registry.
-	 *
-	 * @param const IKey& parent Parent key
-	 */
-	void _registerAction(const IKey& parent);
-
-	/**
-	 * Create extension key into registry.
-	 *
-	 * @param const IKey& parent Parent key
-	 */
-	void _registerExtension(const IKey& parent);
-
-	/**
 	 * Get path and index to script's icon.
 	 *
 	 * @return std::wstring Icon path with ",<idx>" suffix
@@ -111,13 +83,6 @@ public:
 	 * @return std::wstring Path
 	 */
 	std::wstring _getDefaultIcon();
-
-	/**
-	 * Get the command line for open command.
-	 *
-	 * @return std::wstring Command
-	 */
-	std::wstring _getOpenCommand();
 };
 
 class UnregisterCommand : public BaseRegisterCommand
@@ -139,20 +104,6 @@ public:
 	 * @return int Exit code
 	 */
 	int run();
-
-	/**
-	 * Remove handler key from registry.
-	 *
-	 * @param const IKey& parent Parent key
-	 */
-	void _unregisterAction(const IKey& parent);
-
-	/**
-	 * Remove extension key from registry.
-	 *
-	 * @param const IKey& parent Parent key
-	 */
-	void _unregisterExtension(const IKey& parent);
 };
 
 }

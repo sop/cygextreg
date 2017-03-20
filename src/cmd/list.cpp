@@ -1,20 +1,24 @@
 #include "list.hpp"
 #include <memory>
+#include "registry/key.hpp"
+#include "registry/registry.hpp"
 #include "util/strconv.hpp"
 #include "util/message.hpp"
-#include "util/winerror.hpp"
+
+using namespace registry;
 
 namespace cygscript {
 
 int ListCommand::run() {
 	std::wstringstream ss;
-	std::wstring ext(L".sh");
 	bool is_registered = false;
 	int retval = 0;
 	/* list extensions registered for the current user */
 	try {
-		PredefinedKey cu(HKEY_CURRENT_USER);
-		std::vector<std::wstring> exts = _searchRegisteredExtensions(cu);
+		std::vector<std::wstring> exts =
+			Registry(std::unique_ptr<IKey>(
+						 new PredefinedKey(HKEY_CURRENT_USER)))
+			    .searchRegisteredExtensions();
 		if (exts.size()) {
 			is_registered |= true;
 			ss << "Extensions registered for the current user:" << std::endl;
@@ -27,8 +31,10 @@ int ListCommand::run() {
 	}
 	/* list extensions registered for all users */
 	try {
-		PredefinedKey lm(HKEY_LOCAL_MACHINE);
-		std::vector<std::wstring> exts = _searchRegisteredExtensions(lm);
+		std::vector<std::wstring> exts =
+			Registry(std::unique_ptr<IKey>(
+						 new PredefinedKey(HKEY_LOCAL_MACHINE)))
+			    .searchRegisteredExtensions();
 		if (exts.size()) {
 			is_registered |= true;
 			ss << "Extensions registered for all users:" << std::endl;
@@ -46,74 +52,6 @@ int ListCommand::run() {
 	}
 	show_message(ss.str());
 	return retval;
-}
-
-std::vector<std::wstring> ListCommand::_searchRegisteredExtensions(
-	const IKey& root) {
-	Key base(root, L"Software\\Classes", KEY_READ);
-	wchar_t name[256];
-	DWORD name_size;
-	std::vector<std::wstring> actions;
-	for(DWORD idx = 0;; ++idx) {
-		name_size = sizeof(name) / sizeof(name[0]);
-		LONG result = RegEnumKeyEx(
-			base, idx, name, &name_size, NULL, NULL, NULL, NULL);
-		if (ERROR_NO_MORE_ITEMS == result) {
-			break;
-		}
-		else if (ERROR_MORE_DATA == result) {
-			continue;
-		}
-		else if (ERROR_SUCCESS != result) {
-			THROW_ERROR_CODE("Failed to enumerate registry", result);
-		}
-		if (0 == wcsncmp(name, L"cygscript.", 10)) {
-			actions.push_back(name);
-		}
-	}
-	std::vector<std::wstring> exts;
-	for (auto action : actions) {
-		std::wstring ext = action.substr(9);
-		if (_isRegistered(root, ext)) {
-			exts.push_back(ext);
-		}
-	}
-	return exts;
-}
-
-bool ListCommand::_isRegistered(const IKey& root, const std::wstring& ext) {
-	Key base(root, L"Software\\Classes", KEY_QUERY_VALUE);
-	if (!base.hasSubKey(ext)) {
-		return false;
-	}
-	/* check that handler matches the extension */
-	Key key(base, ext, KEY_QUERY_VALUE);
-	std::wstring action = std::wstring(L"cygscript") + ext;
-	if (key.getString(L"") != action) {
-		return false;
-	}
-	/* check the program path of open command */
-	try {
-		std::wstring prog =
-			_getOpenCommandProg(Key(base, action, KEY_QUERY_VALUE));
-		if (prog != _progPath) {
-			return false;
-		}
-	} catch(...) {
-		return false;
-	}
-	return true;
-}
-
-std::wstring ListCommand::_getOpenCommandProg(const IKey& handler) {
-	std::wstring command = Key(
-		handler, L"shell\\open\\command", KEY_QUERY_VALUE).getString(L"");
-	int argc;
-	LPWSTR* argv = CommandLineToArgvW(command.c_str(), &argc);
-	if (NULL == argv || argc < 1) {
-		throw std::runtime_error("No open command.");
-	}
-	return std::wstring(argv[0]);
 }
 
 }
