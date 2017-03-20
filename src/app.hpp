@@ -1,3 +1,6 @@
+#ifndef __APP_HPP__
+#define __APP_HPP__
+
 #include <vector>
 #include <string>
 #include "util/winpath.hpp"
@@ -64,3 +67,5 @@ private:
 };
 
 }
+
+#endif
