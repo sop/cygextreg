@@ -11,6 +11,7 @@ class WinPathW;
 class CygPath
 {
 	std::string _path;
+
 public:
 	/**
 	 * Constructor.

@@ -22,16 +22,44 @@ namespace cygscript {
 class WinError
 {
 public:
+	/**
+	 * Constructor.
+	 */
 	WinError() :
 		_err(GetLastError()) {
 	};
+
+	/**
+	 * Constructor.
+	 *
+	 * @param DWORD err Error number
+	 */
 	WinError(DWORD err) :
 		_err(err) {
 	};
+
+	/**
+	 * Cast to wstring.
+	 *
+	 * @return std::wstring
+	 */
 	operator std::wstring() const;
+
+	/**
+	 * Cast to string.
+	 *
+	 * @return std::string
+	 */
 	operator std::string() const;
+
 private:
 	DWORD _err;
+
+	/**
+	 * Translate error message to current locale.
+	 *
+	 * @return std::wstring
+	 */
 	std::wstring _translateMessage() const;
 };
 

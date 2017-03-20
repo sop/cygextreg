@@ -7,6 +7,7 @@ namespace cygscript {
 class ExecCommand : public ICommand
 {
 	std::vector<std::wstring> _args;
+
 public:
 	/**
 	 * Constructor.
@@ -22,6 +23,7 @@ public:
 	 * @return int Exit code
 	 */
 	int run();
+
 private:
 	/**
 	 * Get the arguments for script execution.

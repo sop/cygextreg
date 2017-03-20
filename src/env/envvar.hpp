@@ -45,6 +45,7 @@ public:
 	 * @return EnvVar& Self
 	 */
 	const EnvVar& unset() const;
+
 private:
 	std::wstring _name;
 };

@@ -20,6 +20,7 @@ public:
 class WinPathW : public IWinPath
 {
 	std::wstring _path;
+
 public:
 	/**
 	 * Constructor.

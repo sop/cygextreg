@@ -9,18 +9,44 @@
 namespace registry
 {
 
-class IKey {
+class IKey
+{
 public:
+	/**
+	 * Constructor.
+	 */
 	IKey() :
 		_hKey(NULL) {
 	}
+
+	/**
+	 * Constructor.
+	 *
+	 * @param HKEY hKey Key handle
+	 */
 	IKey(HKEY hKey) : _hKey(hKey) {
 	}
+
+	/**
+	 * Destructor.
+	 */
 	virtual ~IKey() {
 	}
+
+	/**
+	 * Get key handle.
+	 *
+	 * @return HKEY
+	 */
 	virtual HKEY handle() const {
 		return _hKey;
 	}
+
+	/**
+	 * Cast to HKEY.
+	 *
+	 * @return HKEY
+	 */
 	operator HKEY() const {
 		return _hKey;
 	}
@@ -39,6 +65,7 @@ public:
 	 * @param const std::wstring& subkey Key name
 	 */
 	void deleteSubTree(const std::wstring& subkey) const;
+
 protected:
 	HKEY _hKey;
 };
@@ -46,6 +73,11 @@ protected:
 class Key : public IKey
 {
 public:
+	/**
+	 * Constructor.
+	 *
+	 * @param HKEY hKey Key handle
+	 */
 	Key(HKEY hKey) : IKey(hKey) {
 	}
 
@@ -128,6 +160,11 @@ public:
 class PredefinedKey : public IKey
 {
 public:
+	/**
+	 * Constructor.
+	 *
+	 * @param HKEY hKey Key handle
+	 */
 	PredefinedKey(HKEY hKey) : IKey(hKey) {
 	}
 	~PredefinedKey() {
