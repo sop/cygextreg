@@ -69,7 +69,8 @@ std::wstring ExecCommand::_getExecCmd() {
 	}
 	/* if script exists with a non-zero exit code, keep terminal open
 	   until keypress */
-	ss << L"|| { echo \"Process exited with code $?\"; read -n 1 -s; }";
+	ss << L"|| { echo -e \"\\n[Process exited - exit code $?]\";"
+	    " read -n 1 -s; }";
 	return ss.str();
 }
 
