@@ -33,7 +33,7 @@ private:
 	std::vector<std::wstring> _getExecArgs();
 
 	/**
-	 * Get the command line for /bin/sh.
+	 * Get the command line for /bin/bash.
 	 *
 	 * @param const std::vector<std::wstring> args Wide arguments
 	 * @return std::wstring Command line
