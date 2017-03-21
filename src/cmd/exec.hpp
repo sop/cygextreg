@@ -35,9 +35,10 @@ private:
 	/**
 	 * Get the command line for /bin/sh.
 	 *
+	 * @param const std::vector<std::wstring> args Wide arguments
 	 * @return std::wstring Command line
 	 */
-	std::wstring _getExecCmd();
+	std::wstring _getExecCmd(const std::vector<std::wstring> args);
 
 	/**
 	 * Execute script using a given command line.

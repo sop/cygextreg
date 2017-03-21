@@ -30,7 +30,7 @@ int ExecCommand::run() {
 	cmd_line << mintty.str() << L" -o Locale=C -o Charset=UTF-8"
 	         << L" -t " << _escapeWinArg(script_name)
 	         << L" --exec /bin/bash -il -c "
-	         << _escapeWinArg(_getExecCmd());
+	         << _escapeWinArg(_getExecCmd(exec_args));
 	_execute(cmd_line.str());
 	return 0;
 }
@@ -50,9 +50,9 @@ std::vector<std::wstring> ExecCommand::_getExecArgs() {
 	return args;
 }
 
-std::wstring ExecCommand::_getExecCmd() {
+std::wstring ExecCommand::_getExecCmd(const std::vector<std::wstring> args) {
 	std::wstringstream ss;
-	for (auto arg : _getExecArgs()) {
+	for (auto arg : args) {
 		/* convert Windows paths to Cygwin form */
 		if (_isWinPath(arg, true)) {
 			/* Posix path is represented in UTF-8 encoding. However, we must
