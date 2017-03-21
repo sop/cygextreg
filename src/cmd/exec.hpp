@@ -107,13 +107,6 @@ private:
 	                 const std::wstring& to);
 
 	/**
-	 * Get PATH environment variable for to be set before executing script.
-	 *
-	 * @return std::wstring
-	 */
-	std::wstring _getEnvPath();
-
-	/**
 	 * Get readable script name for the shell window title.
 	 *
 	 * @return std::wstring

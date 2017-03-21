@@ -11,8 +11,6 @@
 #include "util/winpath.hpp"
 #include "util/strconv.hpp"
 #include "util/winerror.hpp"
-#include "util/message.hpp"
-#include "env/envvar.hpp"
 
 namespace cygscript {
 
@@ -78,8 +76,6 @@ void ExecCommand::_execute(const std::wstring& cmd_line) {
 	STARTUPINFO si = {};
 	si.cb = sizeof(si);
 	PROCESS_INFORMATION pi = {};
-	/* set PATH environment variable */
-	env::EnvVar(L"PATH").set(_getEnvPath());
 	if (0 == CreateProcess(
 			NULL, (LPWSTR)cmd_line.c_str(), NULL, NULL, FALSE,
 			CREATE_NEW_PROCESS_GROUP, NULL, NULL, &si, &pi)) {
@@ -139,14 +135,6 @@ void ExecCommand::_replaceAll(std::wstring& str, const std::wstring& from,
 		str.replace(start, from.length(), to);
 		start += to.length();
 	}
-}
-
-std::wstring ExecCommand::_getEnvPath() {
-	std::wstring cygroot = CygPath("/").winPath().str();
-	std::wstring curpath = env::EnvVar(L"PATH").get();
-	std::wstringstream ss;
-	ss << cygroot << L"\\usr\\local\\bin;" << cygroot << L"\\bin;" << curpath;
-	return ss.str();
 }
 
 std::wstring ExecCommand::_getScriptName(const std::wstring& path) {

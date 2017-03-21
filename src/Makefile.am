@@ -8,8 +8,8 @@ bin_PROGRAMS = cygscript
 cygscript_SOURCES = main.cpp app.cpp \
 	util/strconv.cpp util/message.cpp util/winerror.cpp util/elevated.cpp \
 	util/cygpath.cpp util/winpath.cpp \
+	registry/registry.cpp registry/key.cpp \
 	cmd/register.cpp cmd/exec.cpp cmd/list.cpp \
-	registry/registry.cpp registry/key.cpp env/envvar.cpp \
 	cygscript.rc
 cygscript_LDADD = -lshlwapi
 
