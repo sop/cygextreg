@@ -3,6 +3,7 @@
 #include <iostream>
 #include <sstream>
 #include <algorithm>
+#include <memory>
 #include <sys/cygwin.h>
 #include <sys/stat.h>
 #include <windows.h>
@@ -138,12 +139,10 @@ void ExecCommand::_replaceAll(std::wstring& str, const std::wstring& from,
 }
 
 std::wstring ExecCommand::_getScriptName(const std::wstring& path) {
-	wchar_t* buf = new wchar_t[path.size() + 1];
-	wcscpy(buf, path.c_str());
-	wchar_t *p = PathFindFileName(buf);
-	std::wstring name(p);
-	delete[] buf;
-	return name;
+	std::unique_ptr<wchar_t[]> buf(new wchar_t[path.size() + 1]);
+	wcscpy(buf.get(), path.c_str());
+	wchar_t *p = PathFindFileName(buf.get());
+	return std::wstring(p);
 }
 
 }

@@ -1,4 +1,5 @@
 #include "strconv.hpp"
+#include <memory>
 
 namespace cygscript {
 
@@ -19,11 +20,10 @@ std::string wide_to_mb(std::wstring str, UINT codepage) {
 		/* too small buffer, query required size and allocate from heap */
 		ret = WideCharToMultiByte(
 			codepage, 0, str.c_str(), -1, NULL, 0, NULL, NULL);
-		char* tmp = new char[ret];
+		std::unique_ptr<char[]> tmp(new char[ret]);
 		ret = WideCharToMultiByte(
-			codepage, 0, str.c_str(), -1, tmp, ret, NULL, NULL);
-		out = std::string(tmp, ret - 1);
-		delete[] tmp;
+			codepage, 0, str.c_str(), -1, tmp.get(), ret, NULL, NULL);
+		out = std::string(tmp.get(), ret - 1);
 	}
 	return out;
 }
@@ -45,11 +45,10 @@ std::wstring mb_to_wide(std::string str, UINT codepage) {
 		/* too small buffer, query required size and allocate from heap */
 		ret = MultiByteToWideChar(
 			codepage, 0, str.c_str(), -1, NULL, 0);
-		wchar_t* tmp = new wchar_t[ret];
+		std::unique_ptr<wchar_t[]> tmp(new wchar_t[ret]);
 		ret = MultiByteToWideChar(
-			codepage, 0, str.c_str(), -1, tmp, ret);
-		out = std::wstring(tmp, ret - 1);
-		delete[] tmp;
+			codepage, 0, str.c_str(), -1, tmp.get(), ret);
+		out = std::wstring(tmp.get(), ret - 1);
 	}
 	return out;
 }

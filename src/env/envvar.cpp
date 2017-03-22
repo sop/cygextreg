@@ -1,5 +1,6 @@
 #include "envvar.hpp"
 #include "util/winerror.hpp"
+#include <memory>
 
 namespace env {
 
@@ -28,13 +29,12 @@ std::wstring EnvVar::get() const {
 	}
 	/* buffer too small */
 	else if (len > sizeof(buf) / sizeof(buf[0])) {
-		wchar_t* tmp = new wchar_t[len];
-		len = GetEnvironmentVariable(_name.c_str(), tmp, len);
+		std::unique_ptr<wchar_t[]> tmp(new wchar_t[len]);
+		len = GetEnvironmentVariable(_name.c_str(), tmp.get(), len);
 		if (0 == len) {
 			THROW_LAST_ERROR("GetEnvironmentVariable");
 		}
-		ret.assign(tmp, len);
-		delete[] tmp;
+		ret.assign(tmp.get(), len);
 	} else {
 		ret.assign(buf, len);
 	}
