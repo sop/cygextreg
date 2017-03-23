@@ -3,10 +3,17 @@
 
 namespace cygscript {
 
-class ICommand {
+class ICommand
+{
 public:
 	virtual ~ICommand() {
 	}
+
+	/**
+	 * Run the command and return exit code.
+	 *
+	 * @return int Exit code
+	 */
 	virtual int run() = 0;
 };
 

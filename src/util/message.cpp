@@ -1,4 +1,6 @@
 #include "message.hpp"
+#include <iostream>
+#include <sstream>
 
 namespace cygscript {
 

@@ -1,7 +1,6 @@
 #include "elevated.hpp"
 #include <sstream>
 #include <sys/cygwin.h>
-#include "message.hpp"
 #include "winerror.hpp"
 
 namespace cygscript {

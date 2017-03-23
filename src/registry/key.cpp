@@ -1,4 +1,5 @@
 #include "key.hpp"
+#include <memory>
 
 namespace registry
 {
@@ -71,7 +72,8 @@ const Key& Key::setString(const std::wstring& name,
 }
 
 std::wstring Key::getString(const std::wstring& name) const {
-	wchar_t buf[16];
+	wchar_t buf[256];
+	std::wstring ret;
 	DWORD len = sizeof(buf);
 	LONG status = RegGetValue(
 		_hKey, NULL, name.c_str(), RRF_RT_REG_SZ,
@@ -79,28 +81,27 @@ std::wstring Key::getString(const std::wstring& name) const {
 	/* if string fits to buffer */
 	if (ERROR_SUCCESS == status) {
 		/* convert returned value size to number of wchar_t's without null */
-		return std::wstring(buf, (len >> 1) - 1);
+		ret.assign(buf, (len >> 1) - 1);
 	}
 	/* no value */
 	else if (ERROR_FILE_NOT_FOUND == status) {
-		return std::wstring();
+		/* pass, return empty string */
 	}
 	/* larger buffer required */
-	std::wstring str;
-	if (ERROR_MORE_DATA == status) {
-		wchar_t *buf = (wchar_t *)HeapAlloc(GetProcessHeap(), 0, len);
+	else if (ERROR_MORE_DATA == status) {
+		std::unique_ptr<char[]> tmp(new char[len]);
 		status = RegGetValue(
 			_hKey, NULL, name.c_str(), RRF_RT_REG_SZ,
-			NULL, buf, &len);
+			NULL, tmp.get(), &len);
 		if (ERROR_SUCCESS == status) {
-			str = std::wstring(buf, (len >> 1) - 1);
+			ret.assign(reinterpret_cast<wchar_t*>(tmp.get()), (len >> 1) - 1);
 		}
-		HeapFree(GetProcessHeap(), 0, buf);
 	}
+	/* if RegGetValue failed either on first or second attempt */
 	if (ERROR_SUCCESS != status) {
 		THROW_ERROR_CODE("Failed to fetch string registry value", status);
 	}
-	return str;
+	return ret;
 }
 
 const Key& Key::setDword(const std::wstring& name, DWORD value) const {

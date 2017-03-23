@@ -25,7 +25,7 @@ std::wstring WinError::_translateMessage() const {
 	return msg;
 }
 
-std::string operator+(const std::string &str, const WinError &err) {
+std::string operator+(const std::string& str, const WinError& err) {
 	return str + (std::string)err;
 }
 

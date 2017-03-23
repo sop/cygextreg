@@ -55,11 +55,14 @@ std::vector<std::wstring> Registry::searchRegisteredExtensions() {
 			break;
 		}
 		else if (ERROR_MORE_DATA == result) {
+			/* silently skip entries that don't fit to buffer,
+			   we're looking for entries of ~12 characters anyway */
 			continue;
 		}
 		else if (ERROR_SUCCESS != result) {
 			THROW_ERROR_CODE("Failed to enumerate registry", result);
 		}
+		/* if key name starts with "cygscript." */
 		if (0 == wcsncmp(name, L"cygscript.", 10)) {
 			handlers.push_back(name);
 		}

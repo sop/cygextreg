@@ -1,7 +1,6 @@
-#include <iostream>
+#include <windows.h>
 #include <sstream>
 #include <stdexcept>
-#include <windows.h>
 #include "app.hpp"
 #include "util/message.hpp"
 

@@ -64,7 +64,7 @@ private:
 };
 
 /* std::string + WinError operator */
-std::string operator+(const std::string &str, const WinError &err);
+std::string operator+(const std::string& str, const WinError& err);
 
 }
 

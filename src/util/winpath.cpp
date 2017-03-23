@@ -1,7 +1,7 @@
 #include "winpath.hpp"
 #include <windows.h>
 #include <sys/cygwin.h>
-#include <exception>
+#include <stdexcept>
 #include <memory>
 #include "cygpath.hpp"
 #include "winerror.hpp"

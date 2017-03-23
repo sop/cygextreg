@@ -2,7 +2,7 @@
 #define __UTIL__MESSAGE_HPP__
 
 #include <windows.h>
-#include <iostream>
+#include <string>
 
 namespace cygscript {
 

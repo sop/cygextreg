@@ -45,6 +45,8 @@ public:
 private:
 	/**
 	 * Print application usage.
+	 *
+	 * @param char* progname Name of the executable
 	 */
 	void _printUsage(char* progname);
 
@@ -54,7 +56,7 @@ private:
 	void _printVersion();
 
 	/**
-	 * Get the command line argumenst in wide strings.
+	 * Get the command line arguments in wide strings.
 	 *
 	 * @return std::vector<std::wstring> List of arguments
 	 */

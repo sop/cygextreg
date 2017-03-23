@@ -1,9 +1,9 @@
 #include "command.hpp"
 #include <string>
 #include <memory>
-#include <exception>
-#include "util/strconv.hpp"
+#include <stdexcept>
 #include "registry/key.hpp"
+#include "util/strconv.hpp"
 
 using namespace registry;
 
@@ -70,6 +70,7 @@ public:
 	 */
 	int run();
 
+private:
 	/**
 	 * Get path and index to script's icon.
 	 *

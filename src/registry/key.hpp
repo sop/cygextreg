@@ -1,9 +1,8 @@
 #ifndef __REGISTRY__KEY_HPP__
 #define __REGISTRY__KEY_HPP__
 
-#include <string>
-#include <iostream>
 #include <windows.h>
+#include <string>
 #include "util/winerror.hpp"
 
 namespace registry
@@ -24,7 +23,8 @@ public:
 	 *
 	 * @param HKEY hKey Key handle
 	 */
-	IKey(HKEY hKey) : _hKey(hKey) {
+	IKey(HKEY hKey) :
+		_hKey(hKey) {
 	}
 
 	/**
@@ -60,7 +60,7 @@ public:
 	bool hasSubKey(const std::wstring& subkey) const;
 
 	/**
-	 * Delete registry tree of given subkey.
+	 * Delete registry tree of a given subkey.
 	 *
 	 * @param const std::wstring& subkey Key name
 	 */
@@ -78,7 +78,8 @@ public:
 	 *
 	 * @param HKEY hKey Key handle
 	 */
-	Key(HKEY hKey) : IKey(hKey) {
+	Key(HKEY hKey) :
+		IKey(hKey) {
 	}
 
 	/**

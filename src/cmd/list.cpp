@@ -1,4 +1,5 @@
 #include "list.hpp"
+#include <windows.h>
 #include <memory>
 #include "registry/key.hpp"
 #include "registry/registry.hpp"

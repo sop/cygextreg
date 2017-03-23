@@ -1,10 +1,10 @@
 #include "register.hpp"
-#include <stdexcept>
-#include <string.h>
-#include <sys/cygwin.h>
+#include <windows.h>
 #include <Shlwapi.h>
-#include "registry/registry.hpp"
+#include <sys/cygwin.h>
+#include <stdexcept>
 #include "app.hpp"
+#include "registry/registry.hpp"
 #include "util/message.hpp"
 #include "util/cygpath.hpp"
 

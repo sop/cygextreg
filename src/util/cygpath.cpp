@@ -20,6 +20,7 @@ WinPathW CygPath::winPath(bool keep_relative) const {
 	if (0 == cygwin_conv_path(flags, _path.c_str(), buf, sizeof(buf))) {
 		return WinPathW(std::wstring(buf));
 	}
+	/* errors other than "no space" */
 	if (ENOSPC != errno) {
 		throw std::runtime_error(strerror(errno));
 	}
@@ -28,7 +29,7 @@ WinPathW CygPath::winPath(bool keep_relative) const {
 	if(0 != cygwin_conv_path(flags, _path.c_str(), tmp.get(), len)) {
 		throw std::runtime_error(strerror(errno));
 	}
-	return WinPathW(std::wstring((wchar_t*)tmp.get()));
+	return WinPathW(std::wstring(reinterpret_cast<wchar_t*>(tmp.get())));
 }
 
 }
