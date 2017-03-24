@@ -33,20 +33,20 @@ private:
 	std::vector<std::wstring> _getExecArgs();
 
 	/**
+	 * Execute script using a given command line.
+	 *
+	 * @param std::wstring cmd_line Command line
+	 * @throws std::runtime_error on failure
+	 */
+	void _execute(const std::vector<std::wstring> args);
+
+	/**
 	 * Get the command line for /bin/bash.
 	 *
 	 * @param const std::vector<std::wstring> args Wide arguments
 	 * @return std::wstring Command line
 	 */
 	std::wstring _getExecCmd(const std::vector<std::wstring> args);
-
-	/**
-	 * Execute script using a given command line.
-	 *
-	 * @param std::wstring cmd_line Command line
-	 * @throws std::runtime_error on failure
-	 */
-	void _execute(const std::wstring& cmd_line);
 
 	/**
 	 * Check whether given path exists and is a regular file or symlink.
@@ -64,22 +64,6 @@ private:
 	 * @return bool True if path is in Windows format
 	 */
 	bool _isWinPath(const std::wstring& path, bool must_exist);
-
-	/**
-	 * Convert Windows path to POSIX format.
-	 *
-	 * @param std::wstring path Windows formatted path
-	 * @return std::string POSIX path in UTF-8 charset
-	 */
-	std::string _pathWinToPosix(const std::wstring& path);
-
-	/**
-	 * Convert 8.3 short path to long path format.
-	 *
-	 * @param const std::wstring& path Short path
-	 * @return std::wstring Long path
-	 */
-	std::wstring _toLongPath(const std::wstring& path);
 
 	/**
 	 * Escape command line argument with Windows semantics.
@@ -106,13 +90,6 @@ private:
 	 */
 	void _replaceAll(std::wstring& str, const std::wstring& from,
 	                 const std::wstring& to);
-
-	/**
-	 * Get readable script name for the shell window title.
-	 *
-	 * @return std::wstring
-	 */
-	std::wstring _getScriptName(const std::wstring& path);
 };
 
 }
