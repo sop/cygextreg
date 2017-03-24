@@ -19,7 +19,7 @@ Download the [latest version][] for 32-bit _(i686)_ or 64-bit _(x86_64)_
 Cygwin installation.
 Extract the contents of a zip to the root of your Cygwin directory.
 
-[latest version]: https://github.com/sop/cygscript/releases
+[latest version]: https://github.com/sop/cygscript/releases/latest
 
 ## Installing from source
 
