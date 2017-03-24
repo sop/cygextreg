@@ -65,6 +65,20 @@ public:
 	 * @return WinPathW Long path
 	 */
 	WinPathW longPath(bool extended = false) const;
+
+	/**
+	 * Get the parent directory path.
+	 *
+	 * @return WinPathW
+	 */
+	WinPathW dirname() const;
+
+	/**
+	 * Get the filename portion of the path.
+	 *
+	 * @return WinPathW
+	 */
+	WinPathW basename() const;
 };
 
 }

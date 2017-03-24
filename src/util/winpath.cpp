@@ -1,5 +1,6 @@
 #include "winpath.hpp"
 #include <windows.h>
+#include <Shlwapi.h>
 #include <sys/cygwin.h>
 #include <stdexcept>
 #include <memory>
@@ -48,6 +49,23 @@ WinPathW WinPathW::longPath(bool extended) const {
 		THROW_LAST_ERROR("Failed to get long path");
 	}
 	return WinPathW(std::wstring(tmp.get()));
+}
+
+WinPathW WinPathW::dirname() const {
+	std::unique_ptr<wchar_t[]> buf(new wchar_t[_path.size() + 1]);
+	_path.copy(buf.get(), _path.size());
+	buf[_path.size()] = L'\0';
+	if (FALSE == PathRemoveFileSpec(buf.get())) {
+		throw std::runtime_error("No filename to remove from path.");
+	}
+	return WinPathW(std::wstring(buf.get()));
+}
+
+WinPathW WinPathW::basename() const {
+	std::unique_ptr<wchar_t[]> buf(new wchar_t[_path.size() + 1]);
+	_path.copy(buf.get(), _path.size());
+	buf[_path.size()] = L'\0';
+	return WinPathW(std::wstring(PathFindFileName(buf.get())));
 }
 
 }
