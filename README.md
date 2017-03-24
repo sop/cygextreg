@@ -13,6 +13,14 @@ Just define the preferred [shebang][] line, eg. `#!/usr/bin/python3`
 
 [shebang]: https://en.wikipedia.org/wiki/Shebang_(Unix)
 
+## Installing
+
+Download the [latest version][] for 32-bit _(i686)_ or 64-bit _(x86_64)_
+Cygwin installation.
+Extract the contents of a zip to the root of your Cygwin directory.
+
+[latest version]: https://github.com/sop/cygscript/releases
+
 ## Installing from source
 
 Install Cygwin packages:
