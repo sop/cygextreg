@@ -3,8 +3,8 @@
 # Cygscript
 
 A helper program allowing to register an extension _(eg. `.sh`)_ to be
-executed in [Cygwin][] by double-clicking a file from Windows explorer
-or dragging and dropping files to an icon of a registered extension.
+executed in [Cygwin][] by double-clicking a file from Windows File Explorer
+or by dragging and dropping files to an icon of a registered extension.
 
 [cygwin]: https://www.cygwin.com/
 
