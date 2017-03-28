@@ -1,10 +1,11 @@
 NAME="cygscript"
-VERSION=1.0.1
+VERSION=1.0.2
 RELEASE=1
 CATEGORY="Utils"
+REQUIRES="mintty bash"
 SUMMARY="Run shell scripts from Windows File Explorer"
 DESCRIPTION="A helper program allowing to register an extension (eg. .sh)
 to be executed in Cygwin by double-clicking a file from Windows File Explorer
-or dragging and dropping files to an icon of a registered extension."
+or by dragging and dropping files to an icon of a registered extension."
 HOMEPAGE="https://github.com/sop/cygscript"
 SRC_URI="https://github.com/sop/cygscript/archive/v${VERSION}.tar.gz"
