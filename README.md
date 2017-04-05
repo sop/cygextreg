@@ -69,9 +69,9 @@ Cygwin equivalents (`/cygdrive/...`). So if you drag and drop a file to
 a script icon, the script receives the dropped file's path in Cygwin format
 as a first argument.
 
-If the executed script exists with a non-zero code, MinTTY window shall be
+If the executed script exits with a non-zero code, MinTTY window shall be
 kept open so that you have a chance to review the output.
-If the script succeeds (exists with code 0), MinTTY window is closed
+If the script succeeds (exits with code 0), MinTTY window is closed
 automatically.
 
 ## License
