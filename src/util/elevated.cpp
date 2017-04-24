@@ -3,7 +3,7 @@
 #include <sys/cygwin.h>
 #include "winerror.hpp"
 
-namespace cygscript {
+namespace cygregext {
 
 bool ElevatedProcess::isAdmin() const {
 	ImpersonationToken it;

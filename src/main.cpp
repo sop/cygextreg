@@ -7,12 +7,12 @@
 int main(const int argc, char* const argv[]) {
 	setlocale(LC_ALL, "C.UTF-8");
 	try {
-		cygscript::App app(argc, argv);
+		cygregext::App app(argc, argv);
 		return app.run();
 	} catch (const std::exception &e) {
 		std::stringstream ss;
 		ss << "ERROR: " << e.what() << std::endl;
-		cygscript::show_message(ss.str(), MB_OK | MB_ICONERROR);
+		cygregext::show_message(ss.str(), MB_OK | MB_ICONERROR);
 		return 1;
 	}
 	return 0;

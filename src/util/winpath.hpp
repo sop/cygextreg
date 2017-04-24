@@ -4,7 +4,7 @@
 #include <string>
 #include "cygpath.hpp"
 
-namespace cygscript {
+namespace cygregext {
 
 class CygPath;
 

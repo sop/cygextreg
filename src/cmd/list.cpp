@@ -8,7 +8,7 @@
 
 using namespace registry;
 
-namespace cygscript {
+namespace cygregext {
 
 int ListCommand::run() {
 	std::wstringstream ss;

@@ -2,7 +2,7 @@
 #include <vector>
 #include <string>
 
-namespace cygscript {
+namespace cygregext {
 
 class ExecCommand : public ICommand
 {

@@ -5,7 +5,7 @@
 
 using namespace registry;
 
-namespace cygscript
+namespace cygregext
 {
 
 class Registry

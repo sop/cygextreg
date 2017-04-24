@@ -1,6 +1,6 @@
 [![MIT License](https://img.shields.io/badge/License-MIT-blue.svg)](https://github.com/sop/cygscript/blob/master/LICENSE)
 
-# Cygscript
+# CygRegExt
 
 A helper program allowing to register an extension _(eg. `.sh`)_ to be
 executed in [Cygwin][] by double-clicking a file from Windows File Explorer
@@ -43,18 +43,18 @@ Compile and install:
 
 Register `.sh` _(default)_ filetype:
 
-    cygscript -r
+    cygregext -r
 
 Default is to register only for the current user. To register for all
-users, use `cygscript -ra`. Note that this prompts for an elevated process.
+users, use `cygregext -ra`. Note that this prompts for an elevated process.
 
 To unregister filetype:
 
-    cygscript -u
+    cygregext -u
 
 To register another filetype, pass the extension as an `--ext` argument:
 
-    cygscript -r --ext bash
+    cygregext -r --ext bash
 
 ## Internals
 

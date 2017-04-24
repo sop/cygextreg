@@ -3,13 +3,13 @@
 #include "util/strconv.hpp"
 #include "util/winerror.hpp"
 
-namespace cygscript
+namespace cygregext
 {
 
 void Registry::registerExtension(const std::wstring& ext,
                                  const std::wstring& icon) {
 	Key base = _getClassBase();
-	std::wstring handler_name = std::wstring(L"cygscript") + ext;
+	std::wstring handler_name = std::wstring(L"cygregext") + ext;
 	std::wstring desc = std::wstring(L"Cygwin Shell Script (" + ext + L")");
 	/* handler key */
 	Key handler = Key::create(base, handler_name)
@@ -33,7 +33,7 @@ void Registry::registerExtension(const std::wstring& ext,
 
 void Registry::unregisterExtension(const std::wstring& ext) {
 	Key base = _getClassBase();
-	std::wstring handler_name = std::wstring(L"cygscript") + ext;
+	std::wstring handler_name = std::wstring(L"cygregext") + ext;
 	if (!base.hasSubKey(handler_name)) {
 		throw std::runtime_error(std::string("Extension ") +
 		                         wide_to_mb(ext) + " is not registered.");
@@ -62,8 +62,8 @@ std::vector<std::wstring> Registry::searchRegisteredExtensions() {
 		else if (ERROR_SUCCESS != result) {
 			THROW_ERROR_CODE("Failed to enumerate registry", result);
 		}
-		/* if key name starts with "cygscript." */
-		if (0 == wcsncmp(name, L"cygscript.", 10)) {
+		/* if key name starts with "cygregext." */
+		if (0 == wcsncmp(name, L"cygregext.", 10)) {
 			handlers.push_back(name);
 		}
 	}
@@ -84,8 +84,8 @@ bool Registry::isRegisteredForOther(const std::wstring& ext) {
 		return false;
 	}
 	Key ext_key(base, ext, KEY_QUERY_VALUE);
-	/* if extension doesn't have cygscript handler */
-	std::wstring handler_name = std::wstring(L"cygscript") + ext;
+	/* if extension doesn't have cygregext handler */
+	std::wstring handler_name = std::wstring(L"cygregext") + ext;
 	if (ext_key.getString(L"") != handler_name) {
 		return true;
 	}

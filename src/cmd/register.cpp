@@ -8,7 +8,7 @@
 #include "util/message.hpp"
 #include "util/cygpath.hpp"
 
-namespace cygscript {
+namespace cygregext {
 
 std::unique_ptr<IKey> BaseRegisterCommand::_getRootKey() const {
 	if (_forAllUsers) {

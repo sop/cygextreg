@@ -1,6 +1,6 @@
 #include "command.hpp"
 
-namespace cygscript {
+namespace cygregext {
 
 class ListCommand : public ICommand
 {

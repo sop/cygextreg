@@ -1,7 +1,7 @@
 #include "winerror.hpp"
 #include "strconv.hpp"
 
-namespace cygscript {
+namespace cygregext {
 
 WinError::operator std::wstring() const {
 	return _translateMessage();

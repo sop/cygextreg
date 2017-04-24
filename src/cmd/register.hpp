@@ -7,7 +7,7 @@
 
 using namespace registry;
 
-namespace cygscript {
+namespace cygregext {
 
 class BaseRegisterCommand : public ICommand
 {

@@ -7,7 +7,7 @@
 #include "cygpath.hpp"
 #include "winerror.hpp"
 
-namespace cygscript {
+namespace cygregext {
 
 CygPath WinPathW::cygPath(bool keep_relative) const {
 	cygwin_conv_path_t flags = CCP_WIN_W_TO_POSIX;
