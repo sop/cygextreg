@@ -9,7 +9,7 @@ namespace cygregext
 void Registry::registerExtension(const std::wstring& ext,
                                  const std::wstring& icon) {
 	Key base = _getClassBase();
-	std::wstring handler_name = std::wstring(L"cygregext") + ext;
+	std::wstring handler_name = _handlerPrefix + ext;
 	std::wstring desc = std::wstring(L"Cygwin Shell Script (" + ext + L")");
 	/* handler key */
 	Key handler = Key::create(base, handler_name)
@@ -33,7 +33,7 @@ void Registry::registerExtension(const std::wstring& ext,
 
 void Registry::unregisterExtension(const std::wstring& ext) {
 	Key base = _getClassBase();
-	std::wstring handler_name = std::wstring(L"cygregext") + ext;
+	std::wstring handler_name = _handlerPrefix + ext;
 	if (!base.hasSubKey(handler_name)) {
 		throw std::runtime_error(std::string("Extension ") +
 		                         wide_to_mb(ext) + " is not registered.");
@@ -43,6 +43,8 @@ void Registry::unregisterExtension(const std::wstring& ext) {
 }
 
 std::vector<std::wstring> Registry::searchRegisteredExtensions() {
+	/* handler prefix to search for */
+	std::wstring _prefix = _handlerPrefix + L".";
 	Key base = _getClassBase(KEY_READ);
 	wchar_t name[256];
 	DWORD name_size;
@@ -62,8 +64,8 @@ std::vector<std::wstring> Registry::searchRegisteredExtensions() {
 		else if (ERROR_SUCCESS != result) {
 			THROW_ERROR_CODE("Failed to enumerate registry", result);
 		}
-		/* if key name starts with "cygregext." */
-		if (0 == wcsncmp(name, L"cygregext.", 10)) {
+		/* if key name starts with prefix */
+		if (0 == wcsncmp(name, _prefix.c_str(), _prefix.size())) {
 			handlers.push_back(name);
 		}
 	}
@@ -84,8 +86,8 @@ bool Registry::isRegisteredForOther(const std::wstring& ext) {
 		return false;
 	}
 	Key ext_key(base, ext, KEY_QUERY_VALUE);
-	/* if extension doesn't have cygregext handler */
-	std::wstring handler_name = std::wstring(L"cygregext") + ext;
+	/* if extension doesn't have this app as a handler */
+	std::wstring handler_name = _handlerPrefix + ext;
 	if (ext_key.getString(L"") != handler_name) {
 		return true;
 	}

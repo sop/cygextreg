@@ -12,6 +12,11 @@ class Registry
 {
 	std::unique_ptr<IKey> _rootKey;
 
+	/**
+	 * Prefix for registered handlers.
+	 */
+	const std::wstring _handlerPrefix = std::wstring(L"cygregext");
+
 public:
 	/**
 	 * Constructor.
