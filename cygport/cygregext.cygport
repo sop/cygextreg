@@ -4,7 +4,7 @@ RELEASE=1
 CATEGORY="Utils"
 REQUIRES="mintty bash"
 SUMMARY="Run shell scripts from Windows File Explorer"
-DESCRIPTION="A helper program allowing to register an extension (eg. .sh)
+DESCRIPTION="A utility program allowing to register an extension (eg. .sh)
 to be executed in Cygwin by double-clicking a file from Windows File Explorer
 or by dragging and dropping files to an icon of a registered extension."
 HOMEPAGE="https://github.com/sop/cygscript"
