@@ -1,0 +1,86 @@
+.TH CYGREGEXT 1 2017-04-25 Cygwin Cygwin
+
+.SH NAME
+
+cygregext \- Register a script file type to Windows File Explorer
+
+.SH SYNOPSIS
+
+\fBcygregext\fP
+\fB-r\fP|\fB-u\fP [\fB-a\fP] [\fB-f\fP]
+[\fB--ext\fP=\fIEXT\fP]
+[\fB--icon\fP=\fIPATH\fP[,\fIN\fP]]
+.br
+\fBcygregext\fP
+\fB-l\fP
+
+.SH DESCRIPTION
+
+CygRegExt is a utility program allowing to register an extension
+(eg. \fI.sh\fP) to be executed in Cygwin by double-clicking a file from
+Windows File Explorer or by dragging and dropping files to an icon of
+a registered extension.
+
+.SH OPTIONS
+
+.TP
+\fB-r\fP, \fB--register\fP
+Add a file type to the Windows registry.
+
+.TP
+\fB-u\fP, \fB--unregister\fP
+Remove a file type from the Windows registry.
+
+.TP
+\fB--ext\fP=\fIEXT\fP
+Register or unregister files of the given extension.
+Default to \fI.sh\fP.
+
+.TP
+\fB--icon\fP=\fIPATH\fP[,\fIN\fP]
+Path and optional index of the icon to register for an extension.
+If an index is not defined, the first icon shall be used.
+Default to the icon of this application.
+
+.TP
+\fB-a\fP, \fB--all\fP
+Register or unregister extension for all users.
+This requires elevated privileges. Prompts for an elevated process if not
+run as an administrator.
+Default is to register or unregister for the current user only.
+
+.TP
+\fB-f\fP, \fB--force\fP
+Overwrite if already registered for another application.
+
+.TP
+\fB-l\fP, \fB--list\fP
+List extensions registered for Cygwin.
+
+.TP
+\fB-h\fP, \fB--help\fP
+Display help and exit.
+
+.TP
+\fB-V\fP, \fB--version\fP
+Print version and exit.
+
+.SH BUGS
+
+Please report bugs to \fIhttps://github.com/sop/cygscript/issues\fP.
+
+.SH SEE ALSO
+
+Additional information can be found on the project page
+\fIhttps://github.com/sop/cygscript\fP.
+
+.SH LICENSE
+
+Copyright (C) 2017 Joni Eskelinen
+.LP
+CygRegExt is released under the terms of \fBThe MIT License\fP.
+See \fIhttps://github.com/sop/cygscript/blob/master/LICENSE\fP
+for the full license text.
+.br
+Icons: Tango Desktop Project
+(\fIhttp://tango.freedesktop.org/\fP)
