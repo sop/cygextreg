@@ -152,14 +152,14 @@ WinPathW App::getPath() {
 static char help[] =
 	""
 	"Options:\n"
-	"  -r, --register     Add extension to Windows registry.\n"
-	"  -u, --unregister   Remove extension from Windows registry.\n"
-	"      --ext=EXT      Register or unregister files of the given extension,\n"
-	"                       default to .sh\n"
-	"      --icon=PATH,N  Path and index of the icon to register for the extension,\n"
-	"                       default to icon of this application.\n"
-	"  -a, --all          Register or unregister extension for all users,\n"
-	"                       default to current user.\n"
+	"  -r, --register     Add a file type to the Windows registry.\n"
+	"  -u, --unregister   Remove a file type from the Windows registry.\n"
+	"      --ext=EXT      Register or unregister files of the given extension.\n"
+	"                       Default to .sh.\n"
+	"      --icon=PATH,N  Path and index of the icon to register for an extension.\n"
+	"                       Default to the icon of this application.\n"
+	"  -a, --all          Register or unregister extension for all users.\n"
+	"                       Default to current user only.\n"
 	"  -f, --force        Overwrite if already registered for another application.\n"
 	"  -l, --list         List registered extensions.\n"
 	"  -h, --help         Display this help and exit.\n"
@@ -168,7 +168,7 @@ static char help[] =
 void App::_printUsage(char *progname) {
 	std::stringstream ss;
 	ss << "Usage: " << progname << " [OPTION]..." << std::endl;
-	ss << "Register script file type (.sh) to Windows File Explorer."
+	ss << "Register a script file type (.sh) to Windows File Explorer."
 	   << std::endl << std::endl;
 	ss << help;
 	show_message(ss.str());
