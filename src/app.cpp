@@ -167,7 +167,7 @@ static char help[] =
 
 void App::_printUsage(char *progname) {
 	std::stringstream ss;
-	ss << "Usage: " << progname << " [OPTION]..." << std::endl;
+	ss << "Usage: " << progname << " -r|-u|-l [OPTION]..." << std::endl;
 	ss << "Register a script file type (.sh) to Windows File Explorer."
 	   << std::endl << std::endl;
 	ss << help;
