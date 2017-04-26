@@ -1,5 +1,5 @@
 NAME="cygregext"
-VERSION=1.0.2
+VERSION=1.1.0
 RELEASE=1
 CATEGORY="Utils"
 REQUIRES="mintty bash"
