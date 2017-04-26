@@ -1,4 +1,4 @@
-[![MIT License](https://img.shields.io/badge/License-MIT-blue.svg)](https://github.com/sop/cygscript/blob/master/LICENSE)
+[![MIT License](https://img.shields.io/badge/License-MIT-blue.svg)](https://github.com/sop/cygregext/blob/master/LICENSE)
 
 # CygRegExt
 
@@ -19,7 +19,7 @@ Download the [latest version][] for 32-bit _(i686)_ or 64-bit _(x86_64)_
 Cygwin installation.
 Extract the contents of a zip to the root of your Cygwin directory.
 
-[latest version]: https://github.com/sop/cygscript/releases/latest
+[latest version]: https://github.com/sop/cygregext/releases/latest
 
 ## Installing from source
 
@@ -29,7 +29,7 @@ Install Cygwin packages:
 
 Get the source:
 
-    git clone https://github.com/sop/cygscript.git
+    git clone https://github.com/sop/cygregext.git
 
 Prepare environment:
 
@@ -77,4 +77,4 @@ automatically.
 ## License
 
 This project is licensed under the
-[MIT License](https://github.com/sop/cygscript/blob/master/LICENSE).
+[MIT License](https://github.com/sop/cygregext/blob/master/LICENSE).
