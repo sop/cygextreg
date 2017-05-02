@@ -1,7 +1,7 @@
 #include "strconv.hpp"
 #include <memory>
 
-namespace cygregext {
+namespace cygextreg {
 
 std::string wide_to_mb(std::wstring str, UINT codepage) {
 	std::string out;

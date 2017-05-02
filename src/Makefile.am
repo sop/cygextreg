@@ -4,14 +4,14 @@ AM_CPPFLAGS = -DUNICODE -D_UNICODE -D_WIN32_WINNT=0x0600
 
 AUTOMAKE_OPTIONS = subdir-objects
 
-bin_PROGRAMS = cygregext
-cygregext_SOURCES = main.cpp app.cpp \
+bin_PROGRAMS = cygextreg
+cygextreg_SOURCES = main.cpp app.cpp \
 	util/strconv.cpp util/message.cpp util/winerror.cpp util/elevated.cpp \
 	util/cygpath.cpp util/winpath.cpp \
 	registry/registry.cpp registry/key.cpp \
 	cmd/register.cpp cmd/exec.cpp cmd/list.cpp \
-	cygregext.rc
-cygregext_LDADD = -lshlwapi
+	cygextreg.rc
+cygextreg_LDADD = -lshlwapi
 
 .rc.o:
 	windres -o $@ $<

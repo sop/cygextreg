@@ -3,7 +3,7 @@
 
 #include <windows.h>
 
-namespace cygregext {
+namespace cygextreg {
 
 /**
  * Admin permission checking implemented according to

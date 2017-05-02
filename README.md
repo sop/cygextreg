@@ -1,6 +1,6 @@
-[![MIT License](https://img.shields.io/badge/License-MIT-blue.svg)](https://github.com/sop/cygregext/blob/master/LICENSE)
+[![MIT License](https://img.shields.io/badge/License-MIT-blue.svg)](https://github.com/sop/cygextreg/blob/master/LICENSE)
 
-# CygRegExt
+# CygExtReg
 
 A utility program allowing to register an extension (eg. `.sh`) to be
 executed in [Cygwin][] by double-clicking a file from Windows File Explorer
@@ -19,7 +19,7 @@ Download the [latest version][] for 32-bit (*i686*) or 64-bit (*x86\_64*)
 Cygwin installation.
 Extract the contents of a zip to the root of your Cygwin directory.
 
-[latest version]: https://github.com/sop/cygregext/releases/latest
+[latest version]: https://github.com/sop/cygextreg/releases/latest
 
 ## Installing from source
 
@@ -29,7 +29,7 @@ Install Cygwin packages:
 
 Get the source:
 
-    git clone https://github.com/sop/cygregext.git
+    git clone https://github.com/sop/cygextreg.git
 
 Prepare environment:
 
@@ -43,19 +43,19 @@ Compile and install:
 
 Register default (`.sh`) filetype:
 
-    cygregext -r
+    cygextreg -r
 
 Default is to register only for the current user. To register for all
-users, use `cygregext -ra`. Note that this prompts for an elevated process.
+users, use `cygextreg -ra`. Note that this prompts for an elevated process.
 
 To unregister default filetype:
 
-    cygregext -u
+    cygextreg -u
 
 To register another filetype (eg. `.bash`), pass the extension
 as an `--ext` argument:
 
-    cygregext -r --ext bash
+    cygextreg -r --ext bash
 
 ## Internals
 
@@ -84,4 +84,4 @@ automatically.
 ## License
 
 This project is licensed under the
-[MIT License](https://github.com/sop/cygregext/blob/master/LICENSE).
+[MIT License](https://github.com/sop/cygextreg/blob/master/LICENSE).

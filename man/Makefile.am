@@ -1,1 +1,1 @@
-man_MANS = cygregext.1
+man_MANS = cygextreg.1

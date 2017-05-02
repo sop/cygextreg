@@ -3,7 +3,7 @@
 #include "util/strconv.hpp"
 #include "util/winerror.hpp"
 
-namespace cygregext
+namespace cygextreg
 {
 
 void Registry::registerExtension(const std::wstring& ext,

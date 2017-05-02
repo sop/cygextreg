@@ -4,7 +4,7 @@
 #include <string>
 #include "cygpath.hpp"
 
-namespace cygregext {
+namespace cygextreg {
 
 class CygPath;
 

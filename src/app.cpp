@@ -13,7 +13,7 @@
 #include "util/strconv.hpp"
 #include "util/message.hpp"
 
-namespace cygregext {
+namespace cygextreg {
 
 /* type of native WinApi GetCommandLineW */
 typedef LPWSTR (__stdcall* native_GetCommandLineW)(void);
@@ -175,7 +175,7 @@ void App::_printUsage(char *progname) {
 }
 
 void App::_printVersion() {
-	std::cout << "cygregext " << VERSION << std::endl;
+	std::cout << "cygextreg " << VERSION << std::endl;
 	std::cout << "Copyright (C) 2017 Joni Eskelinen" << std::endl;
 	std::cout << "License MIT: The MIT License" << std::endl;
 	std::cout << "Icons: Tango Desktop Project" << std::endl;

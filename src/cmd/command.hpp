@@ -1,7 +1,7 @@
 #ifndef __COMMAND_HPP__
 #define __COMMAND_HPP__
 
-namespace cygregext {
+namespace cygextreg {
 
 class ICommand
 {

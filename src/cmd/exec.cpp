@@ -13,7 +13,7 @@
 #include "util/strconv.hpp"
 #include "util/winerror.hpp"
 
-namespace cygregext {
+namespace cygextreg {
 
 int ExecCommand::run() {
 	std::vector<std::wstring> exec_args = _getExecArgs();

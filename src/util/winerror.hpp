@@ -4,12 +4,12 @@
 #include <windows.h>
 #include <sstream>
 
-namespace cygregext {
+namespace cygextreg {
 
 /* throw a runtime_error with a message from given error code */
 #define THROW_ERROR_CODE(msg, code) \
 	do { \
-		::cygregext::WinError _err(code); \
+		::cygextreg::WinError _err(code); \
 		std::stringstream _ss; \
 		_ss << msg << ": " << (std::string)_err; \
 		throw std::runtime_error(_ss.str()); \

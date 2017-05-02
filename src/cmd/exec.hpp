@@ -2,7 +2,7 @@
 #include <vector>
 #include <string>
 
-namespace cygregext {
+namespace cygextreg {
 
 class ExecCommand : public ICommand
 {

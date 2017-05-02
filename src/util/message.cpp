@@ -2,7 +2,7 @@
 #include <iostream>
 #include <sstream>
 
-namespace cygregext {
+namespace cygextreg {
 
 void show_message(const std::wstring& msg, UINT type) {
 	auto str = msg.substr(0, msg.find_last_not_of(L" \t\r\n") + 1);

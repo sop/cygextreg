@@ -5,7 +5,7 @@
 
 using namespace registry;
 
-namespace cygregext
+namespace cygextreg
 {
 
 class Registry
@@ -15,7 +15,7 @@ class Registry
 	/**
 	 * Prefix for registered handlers.
 	 */
-	const std::wstring _handlerPrefix = std::wstring(L"cygregext");
+	const std::wstring _handlerPrefix = std::wstring(L"cygextreg");
 
 public:
 	/**

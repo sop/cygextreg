@@ -4,7 +4,7 @@
 #include <string>
 #include "winpath.hpp"
 
-namespace cygregext {
+namespace cygextreg {
 
 class WinPathW;
 

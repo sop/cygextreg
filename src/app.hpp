@@ -5,7 +5,7 @@
 #include <string>
 #include "util/winpath.hpp"
 
-namespace cygregext {
+namespace cygextreg {
 
 class App
 {

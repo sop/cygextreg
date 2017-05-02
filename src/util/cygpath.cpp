@@ -5,7 +5,7 @@
 #include <memory>
 #include "winpath.hpp"
 
-namespace cygregext {
+namespace cygextreg {
 
 CygPath::CygPath(const WinPathW &path) :
 	_path(path.cygPath()) {
