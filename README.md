@@ -15,8 +15,10 @@ Just define the preferred [shebang][] line, eg. `#!/usr/bin/python3`
 
 ## Installing
 
-Download the [latest version][] for 32-bit (*i686*) or 64-bit (*x86\_64*)
-Cygwin installation.
+Install `cygextreg` via Cygwin setup.
+
+To install manually, download the [latest version][] for
+32-bit (*i686*) or 64-bit (*x86\_64*) Cygwin installation.
 Extract the contents of a zip to the root of your Cygwin directory.
 
 [latest version]: https://github.com/sop/cygextreg/releases/latest
