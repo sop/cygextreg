@@ -27,7 +27,7 @@ int RegisterCommand::run() {
 				  " registered for another application."
 				  " Use -f to override.");
 	}
-	reg.registerExtension(_extension, _getIconPath());
+	reg.registerExtension(_extension, _getIconPath(), _settings);
 	show_message(_extension + L" extension registered.");
 	return 0;
 }

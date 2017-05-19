@@ -10,6 +10,7 @@
 #include <shlwapi.h>
 #include "util/cygpath.hpp"
 #include "util/winpath.hpp"
+#include "util/shutil.hpp"
 #include "util/strconv.hpp"
 #include "util/winerror.hpp"
 
@@ -50,9 +51,9 @@ void ExecCommand::_execute(const std::vector<std::wstring> args) {
 	/* Windows path to mintty.exe */
 	WinPathW mintty = CygPath("/bin/mintty.exe").winPath();
 	cmd_line << mintty.str() << L" -o Locale=C -o Charset=UTF-8"
-	         << L" -t " << _escapeWinArg(script_name)
+	         << L" -t " << escapeWinArg(script_name)
 	         << L" --exec /bin/bash -il -c "
-	         << _escapeWinArg(_getExecCmd(args));
+	         << escapeWinArg(_getExecCmd(args));
 	STARTUPINFO si = {};
 	si.cb = sizeof(si);
 	PROCESS_INFORMATION pi = {};
@@ -78,8 +79,8 @@ std::wstring ExecCommand::_getExecCmd(const std::vector<std::wstring> args) {
 	std::string filename = script_path.basename().cygPath(true).str();
 	/* change directory to script's directory and invoke from there */
 	ss << L"( cd "
-	   << _escapePosixArg(mb_to_wide(dir, codepage)) << L" && "
-	   << _escapePosixArg(mb_to_wide(std::string("./") + filename, codepage))
+	   << escapePosixArg(mb_to_wide(dir, codepage)) << L" && "
+	   << escapePosixArg(mb_to_wide(std::string("./") + filename, codepage))
 	   << L" ";
 	/* remaining arguments */
 	auto it = std::begin(args);
@@ -92,12 +93,22 @@ std::wstring ExecCommand::_getExecCmd(const std::vector<std::wstring> args) {
 			std::string posix_path = WinPathW(arg).longPath().cygPath().str();
 			arg = mb_to_wide(posix_path, codepage);
 		}
-		ss << _escapePosixArg(arg) << L" ";
+		ss << escapePosixArg(arg) << L" ";
 	}
-	/* if script exists with a non-zero exit code, keep terminal open
-	   until keypress */
-	ss << L") || { echo -e \"\\n[Process exited - exit code $?]\";"
-	    " read -n 1 -s; }";
+	ss << L")";
+	/* If exit behaviour is not to close always */
+	if (_settings.exitBehaviour() != Settings::ExitBehaviour::CLOSE) {
+		/* keep window open if script exists with a non-zero exit code */
+		if (_settings.exitBehaviour() == Settings::ExitBehaviour::ON_ERROR) {
+			ss << L" || ";
+		}
+		/* keep window always open after exit */
+		else {
+			ss << L"; ";
+		}
+		ss << L"{ echo -e \"\\n[Process exited - exit code $?]\";"
+		    " read -n 1 -s; }";
+	}
 	return ss.str();
 }
 
@@ -123,28 +134,6 @@ bool ExecCommand::_fileExists(const std::wstring& path) {
 		return false;
 	}
 	return true;
-}
-
-std::wstring ExecCommand::_escapeWinArg(const std::wstring& arg) {
-	std::wstring str = arg;
-	_replaceAll(str, L"\\", L"\\\\");
-	_replaceAll(str, L"\"", L"\\\"");
-	return str.insert(0, L"\"").append(L"\"");
-}
-
-std::wstring ExecCommand::_escapePosixArg(const std::wstring& arg) {
-	std::wstring str = arg;
-	_replaceAll(str, L"'", L"'\\\''");
-	return str.insert(0, L"'").append(L"'");
-}
-
-void ExecCommand::_replaceAll(std::wstring& str, const std::wstring& from,
-                              const std::wstring& to) {
-	size_t start = 0;
-	while((start = str.find(from, start)) != std::wstring::npos) {
-		str.replace(start, from.length(), to);
-		start += to.length();
-	}
 }
 
 }

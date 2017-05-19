@@ -1,6 +1,7 @@
 #include "command.hpp"
 #include <vector>
 #include <string>
+#include "settings/settings.hpp"
 
 namespace cygextreg {
 
@@ -8,13 +9,19 @@ class ExecCommand : public ICommand
 {
 	std::vector<std::wstring> _args;
 
+	Settings _settings;
+
 public:
 	/**
 	 * Constructor.
 	 *
 	 * @param std::vector<std::wstring> args Wide arguments from main function
+	 * @param const Settings& settings Settings
 	 */
-	ExecCommand(std::vector<std::wstring> args) : _args(args) {
+	ExecCommand(std::vector<std::wstring> args,
+	            const Settings& settings) :
+		_args(args),
+		_settings(settings) {
 	}
 
 	/**
@@ -64,32 +71,6 @@ private:
 	 * @return bool True if path is in Windows format
 	 */
 	bool _isWinPath(const std::wstring& path, bool must_exist);
-
-	/**
-	 * Escape command line argument with Windows semantics.
-	 *
-	 * @param std::wstring arg Argument
-	 * @return std::wstring Escaped argument
-	 */
-	std::wstring _escapeWinArg(const std::wstring& arg);
-
-	/**
-	 * Escape command line argument with Posix semantics.
-	 *
-	 * @param std::wstring arg Argument
-	 * @return std::wstring Escaped argument
-	 */
-	std::wstring _escapePosixArg(const std::wstring& arg);
-
-	/**
-	 * Replace all occurences of a string.
-	 *
-	 * @param std::wstring& str String to modify
-	 * @param const std::wstring& from Substring to search
-	 * @param const std::wstring& to Replacement string
-	 */
-	void _replaceAll(std::wstring& str, const std::wstring& from,
-	                 const std::wstring& to);
 };
 
 }

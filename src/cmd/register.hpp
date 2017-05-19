@@ -4,6 +4,7 @@
 #include <stdexcept>
 #include "registry/key.hpp"
 #include "util/strconv.hpp"
+#include "settings/settings.hpp"
 
 using namespace registry;
 
@@ -25,6 +26,7 @@ public:
 			throw std::runtime_error("Extension must start with a dot.");
 		}
 	}
+
 	virtual ~BaseRegisterCommand() {
 	}
 
@@ -45,6 +47,7 @@ protected:
 class RegisterCommand : public BaseRegisterCommand
 {
 	std::string _iconPath;
+	Settings _settings;
 	bool _force;
 
 public:
@@ -53,13 +56,15 @@ public:
 	 *
 	 * @param const std::string& ext Extension
 	 * @param const std::string& icon Path and index to icon
+	 * @param const Settings& settings Settings
 	 * @param bool forAll Whether to register for all users
 	 * @param bool force Force registration if extension is already registered
 	 */
 	RegisterCommand(const std::string& ext, const std::string& icon,
-	                bool forAll, bool force) :
+	                const Settings& settings, bool forAll, bool force) :
 		BaseRegisterCommand(ext, forAll),
 		_iconPath(icon),
+		_settings(settings),
 		_force(force) {
 	}
 

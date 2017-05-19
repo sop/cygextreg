@@ -4,6 +4,7 @@
 #include <vector>
 #include <string>
 #include "util/winpath.hpp"
+#include "settings/settings.hpp"
 
 namespace cygextreg {
 
@@ -17,6 +18,7 @@ class App
 	RegisterType _regType;
 	std::string _extension;
 	std::string _iconPath;
+	std::string _onExit;
 	bool _force;
 
 public:
@@ -61,6 +63,14 @@ private:
 	 * @return std::vector<std::wstring> List of arguments
 	 */
 	std::vector<std::wstring> _wideArgs();
+
+	/**
+	 * Get runtime settings.
+	 *
+	 * @param bool validate Whether to validate values
+	 * @return Settings
+	 */
+	Settings _getSettings(bool validate = false);
 
 	/**
 	 * Check whether process is currently running as elevated.

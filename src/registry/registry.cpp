@@ -2,16 +2,18 @@
 #include "app.hpp"
 #include "util/strconv.hpp"
 #include "util/winerror.hpp"
+#include "util/shutil.hpp"
 
 namespace cygextreg
 {
 
 void Registry::registerExtension(const std::wstring& ext,
-                                 const std::wstring& icon) {
+                                 const std::wstring& icon,
+                                 const Settings& settings) {
 	Key base = _getClassBase();
 	std::wstring handler_name = _handlerPrefix + ext;
 	std::wstring desc = std::wstring(L"Cygwin Shell Script (" + ext + L")");
-	std::wstring cmd = _getOpenCommand();
+	std::wstring cmd = _getOpenCommand(settings);
 	/* remove previous */
 	if (base.hasSubKey(handler_name)) {
 		base.deleteSubTree(handler_name);
@@ -135,10 +137,13 @@ Key Registry::_getClassBase(REGSAM access) {
 	return Key(*_rootKey, L"Software\\Classes", access);
 }
 
-std::wstring Registry::_getOpenCommand() {
+std::wstring Registry::_getOpenCommand(const Settings& settings) {
 	std::wstring path = App::getPath().longPath();
 	std::wstringstream ss;
-	ss << L"\"" << path << L"\"" << L" --exec -- \"%1\" %*";
+	ss << escapeWinArg(path)
+	   << L" --on_exit "
+	   << escapeWinArg(mb_to_wide(settings.exitBehaviourStr()))
+	   << L" --exec -- " << escapeWinArg(L"%1") << L" %*";
 	return ss.str();
 }
 

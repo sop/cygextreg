@@ -2,6 +2,7 @@
 #include <memory>
 #include <vector>
 #include <string>
+#include "settings/settings.hpp"
 
 using namespace registry;
 
@@ -33,8 +34,10 @@ public:
 	 *
 	 * @param const std::wstring& ext Extension
 	 * @param const std::wstring& icon Path to icon
+	 * @param const Settings& settings Settings
 	 */
-	void registerExtension(const std::wstring& ext, const std::wstring& icon);
+	void registerExtension(const std::wstring& ext, const std::wstring& icon,
+	                       const Settings& settings);
 
 	/**
 	 * Unregister extension.
@@ -72,7 +75,7 @@ private:
 	 *
 	 * @return std::wstring Command
 	 */
-	std::wstring _getOpenCommand();
+	std::wstring _getOpenCommand(const Settings& settings);
 };
 
 }

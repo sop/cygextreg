@@ -25,6 +25,7 @@ App::App(const int argc, char* const argv[]) :
 	_regType(RegisterType::USER),
 	_extension(".sh"),
 	_iconPath(std::string()),
+	_onExit(std::string()),
 	_force(false) {
 	static const char *opts = "ruaflhV";
 	static const struct option longopts[] = {
@@ -32,6 +33,7 @@ App::App(const int argc, char* const argv[]) :
 		{ "unregister", no_argument, NULL, 'u' },
 		{ "ext", required_argument, NULL, 'e' },
 		{ "icon", required_argument, NULL, 'i' },
+		{ "on_exit", required_argument, NULL, 'B' },
 		{ "all", no_argument, NULL, 'a' },
 		{ "force", no_argument, NULL, 'f' },
 		{ "list", no_argument, NULL, 'l' },
@@ -63,6 +65,10 @@ App::App(const int argc, char* const argv[]) :
 		/* --icon */
 		case 'i':
 			_iconPath = optarg;
+			break;
+		/* --on_exit */
+		case 'B':
+			_onExit = optarg;
 			break;
 		/* --all */
 		case 'a':
@@ -103,10 +109,12 @@ App::App(const int argc, char* const argv[]) :
 
 int App::run() {
 	std::unique_ptr<ICommand> cmd;
+	std::unique_ptr<Settings> settings;
 	switch (_cmd) {
 	/* execute command */
 	case Command::EXEC:
-		cmd = std::unique_ptr<ExecCommand>(new ExecCommand(_wideArgs()));
+		cmd = std::unique_ptr<ExecCommand>(
+			new ExecCommand(_wideArgs(), _getSettings()));
 		break;
 	/* register extension */
 	case Command::REGISTER:
@@ -114,7 +122,7 @@ int App::run() {
 			_checkElevated();
 		}
 		cmd = std::unique_ptr<RegisterCommand>(
-			new RegisterCommand(_extension, _iconPath,
+			new RegisterCommand(_extension, _iconPath, _getSettings(true),
 			                    _regType == RegisterType::EVERYONE, _force));
 		break;
 	/* unregister extension */
@@ -151,11 +159,12 @@ WinPathW App::getPath() {
 
 static char help[] =
 	""
+	/*        1         2         3         4         5         6         7         8 */
 	"Options:\n"
 	"  -r, --register     Add a file type to the Windows registry.\n"
 	"  -u, --unregister   Remove a file type from the Windows registry.\n"
 	"      --ext=EXT      Register or unregister files of the given extension.\n"
-	"                       Default to .sh.\n"
+	"                       Default to '.sh'.\n"
 	"      --icon=PATH,N  Path and index of the icon to register for an extension.\n"
 	"                       Default to the icon of this application.\n"
 	"  -a, --all          Register or unregister extension for all users.\n"
@@ -206,6 +215,17 @@ std::vector<std::wstring> App::_wideArgs() {
 	}
 	LocalFree(argv);
 	return args;
+}
+
+Settings App::_getSettings(bool validate) {
+	Settings settings;
+	if (!_onExit.empty()) {
+		if (validate && !Settings::isSupportedExitBehaviour(_onExit)) {
+			throw std::runtime_error("Unknown on_exit value.");
+		}
+		settings = settings.withExitBehaviourStr(_onExit);
+	}
+	return settings;
 }
 
 void App::_checkElevated() {
