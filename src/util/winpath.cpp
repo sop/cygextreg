@@ -68,4 +68,11 @@ WinPathW WinPathW::basename() const {
 	return WinPathW(std::wstring(PathFindFileName(buf.get())));
 }
 
+std::wstring WinPathW::extension() const {
+	std::unique_ptr<wchar_t[]> buf(new wchar_t[_path.size() + 1]);
+	_path.copy(buf.get(), _path.size());
+	buf[_path.size()] = L'\0';
+	return std::wstring(PathFindExtension(buf.get()));
+}
+
 }

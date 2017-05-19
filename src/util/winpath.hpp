@@ -79,6 +79,14 @@ public:
 	 * @return WinPathW
 	 */
 	WinPathW basename() const;
+
+	/**
+	 * Get the extension of the filename.
+	 * Returns an empty string if there's no extension.
+	 *
+	 * @return std::wstring
+	 */
+	std::wstring extension() const;
 };
 
 }
