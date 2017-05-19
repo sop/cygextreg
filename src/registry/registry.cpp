@@ -11,18 +11,33 @@ void Registry::registerExtension(const std::wstring& ext,
 	Key base = _getClassBase();
 	std::wstring handler_name = _handlerPrefix + ext;
 	std::wstring desc = std::wstring(L"Cygwin Shell Script (" + ext + L")");
+	std::wstring cmd = _getOpenCommand();
+	/* remove previous */
+	if (base.hasSubKey(handler_name)) {
+		base.deleteSubTree(handler_name);
+	}
 	/* handler key */
 	Key handler = Key::create(base, handler_name)
 	                  .setString(std::wstring(), desc)
-	                  .setDword(L"EditFlags", 0x30);
-	/* default icon*/
+	                  .setDword(L"EditFlags", 0x30)
+	                  .setString(L"FriendlyTypeName", desc);
+	/* default icon */
 	Key::create(handler, L"DefaultIcon")
 	    .setString(std::wstring(), icon);
 	/* open command */
-	Key::create(handler, L"shell")
-	    .setString(std::wstring(), L"open");
-	Key::create(handler, L"shell\\open\\command")
-	    .setString(std::wstring(), _getOpenCommand());
+	Key shell = Key::create(handler, L"shell")
+	                .setString(std::wstring(), L"open");
+	Key open = Key::create(shell, L"open")
+	               .setString(std::wstring(), L"Run in Cygwin")
+	               .setString(L"Icon", icon);
+	Key::create(open, L"command")
+	    .setString(std::wstring(), cmd);
+	/* runas verb (run as administrator) */
+	Key runas = Key::create(shell, L"runas")
+	                .setString(L"Icon", icon)
+	                .setString(L"Extended", L"");
+	Key::create(runas, L"command")
+	    .setString(std::wstring(), cmd);
 	/* drop handler */
 	Key::create(handler, L"shellex\\DropHandler")
 	    .setString(std::wstring(), L"{86C86720-42A0-1069-A2E8-08002B30309D}");
