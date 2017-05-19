@@ -1,4 +1,4 @@
-.TH CYGEXTREG 1 2017-04-25 Cygwin Cygwin
+.TH CYGEXTREG 1 2017-05-16 Cygwin Cygwin
 
 .SH NAME
 
@@ -10,6 +10,7 @@ cygextreg \- Register a script file type to Windows File Explorer
 \fB-r\fP|\fB-u\fP [\fB-a\fP] [\fB-f\fP]
 [\fB--ext\fP=\fIEXT\fP]
 [\fB--icon\fP=\fIPATH\fP[,\fIN\fP]]
+[\fB--on_exit\fP=\fIMODE\fP]
 .br
 \fBcygextreg\fP
 \fB-l\fP
@@ -41,6 +42,21 @@ Default to \fI.sh\fP.
 Path and optional index of the icon to register for an extension.
 If an index is not defined, the first icon shall be used.
 Default to the icon of this application.
+
+.TP
+\fB--on_exit\fP=\fIMODE\fP
+Shell window behaviour after the script exits.
+The following options are available:
+.RS
+.IP close
+Always close the window
+.IP error
+Keep the window open if script exits with a non-zero exit code
+.IP keep
+Always keep the window open
+.RE
+.IP
+Default mode is \fIerror\fP.
 
 .TP
 \fB-a\fP, \fB--all\fP
