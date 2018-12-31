@@ -86,6 +86,7 @@ std::wstring Key::getString(const std::wstring& name) const {
 	/* no value */
 	else if (ERROR_FILE_NOT_FOUND == status) {
 		/* pass, return empty string */
+		status = ERROR_SUCCESS;
 	}
 	/* larger buffer required */
 	else if (ERROR_MORE_DATA == status) {
